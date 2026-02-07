@@ -1,0 +1,94 @@
+---
+title: "Effects of Medicaid Expansion on [Outcome]: A Difference-in-Differences Analysis"
+format:
+  docx:
+    reference-doc: custom-reference.docx
+    number-sections: false
+    highlight-style: null
+author:
+  - name: Your Name
+    affiliations:
+      - name: Institution Name
+        department: Department Name
+        address: Street Address
+        city: City
+        state: ST
+        postal-code: ZIP
+    corresponding: true
+    email: email@institution.edu
+  - name: Co-Author Name
+    affiliations:
+      - name: Institution Name
+        department: Department Name
+date: today
+abstract: |
+  **Importance:** [State the problem and why this research matters]
+
+  **Objective:** How did Medicaid Expansion impact aggregate healthcare consumption and the healthcare consumption of other payers?
+
+  **Design, Setting, and Participants:** Event study difference-in-difference analysis using state-level utilization and expenditure data from the Institute of Health Metrics and Evaluation's Disease Expenditure Accounts from 2010 to 2019.
+
+  **Exposures:** [Describe the main exposure - Medicaid expansion]
+
+  **Main Outcomes and Measures:** [Describe primary outcomes]
+
+  **Results:** [Summarize key findings with specific numbers]
+
+  **Conclusions and Relevance:** [State main conclusions and policy implications]
+keywords: [Medicaid expansion, health policy, difference-in-differences]
+bibliography: references.bib
+csl: jama.csl
+---
+
+## Introduction
+
+[Brief introduction providing context and rationale for the study. JAMA Brief Reports typically limit this to 1-2 paragraphs.]
+Medicaid expansion under the Affordable Care Act increased state and federal funding for Medicaid enrollees, allowing states to expand eligibility and increase provision of services. Prior research has shown that Medicaid expansion can lead to increased healthcare utilization among newly eligible populations. 
+
+However, less is known about how this expansion affects overall healthcare consumption and expenditures across different payer types. This study aims to fill that gap by examining the impact of Medicaid expansion on healthcare utilization and spending patterns of other payers using a difference-in-differences approach.
+
+## Methods
+
+### Study Design and Data Sources
+
+[Describe the difference-in-differences approach and data sources]
+This is an observational cohort study performed at the state level. We use data from the Institute of Health Metrics and Evaluation's Disease Expenditure Accounts at the state level from 2010 to 2019[@dieleman2025TrackingUS]. This data includes annual age-standardized estimates of healthcare utilization and expenditure by type of care (inpatient, ambulatory, emergency department, prescription drugs, and nursing facilities) and payer (Medicaid, Medicare, private insurance, and out-of-pocket). 
+
+
+### Study Population
+
+[Define inclusion/exclusion criteria]
+This study includes all states that expanded Medicaid under the Affordable Care Act between 2014 and 2017. States that expanded in 2019 (Virginia and Maine) or later were not included as exposed since the post-exposure period could not be observed in the data. States that did not expand Medicaid or had not yet expanded Medicaid at each year of potential exposure serve as the control group. 
+
+### Statistical Analysis
+
+[Describe the DiD model specification and any sensitivity analyses]
+We adopt an event study difference-in-difference approach with staggered exposure as described in [@callaway2021DifferenceinDifferencesMultiple]. 
+
+### Ethical Approval
+
+[State IRB approval or exemption status]
+
+
+## Results
+
+[Present main findings. Brief Reports are typically 2000-2500 words total, so be concise.]
+
+## Discussion
+
+[Interpret findings in context of existing literature. Discuss limitations and policy implications. Keep to 2-3 paragraphs for a Brief Report.]
+
+## References
+
+::: {#refs}
+:::
+
+## Tables and Figures
+
+### Table 1. [Descriptive Statistics]
+
+[Table description]
+
+### Figure 1. [Event Study Plot]
+
+[Figure description]

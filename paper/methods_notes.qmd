@@ -1,0 +1,18 @@
+---
+as a---
+title: "Methods Notes"
+format: docx
+bibliography: references.bib
+---
+
+## Data
+
+This analysis uses DEX 2.0 age-standardized data at the state level. Data includes AM, ED, IP, NF, and RX types of care, and an aggregate of the listed TOC. Medicaid expansion status is sourced from KFF. The time series for this data is 2010-2019. Covariates (proportion uninsured, state median income, state poverty level, proportion \<65 and proportion \> 18) are sourced from CPS.
+
+## Model
+
+This is an event study difference-in-difference model which uses the methods described in [@callaway2021] to account for staggered adoption of Medicaid expansion. All states that expanded between 2014 and 2018 are included as treated; Maine and Virginia, which expanded in 2019, are censored in 2019 since we cannot observe trends post expansion. The control group is defined as not-yet-expanded states, including both states that never expand within our period of analysis and states that expanded after each year of observation.
+
+The main analysis uses doubly robust nonparametric estimation as described in [@callaway2021], with state median income, state poverty level, the proportion of the population \<18, the proportion of the population \> 65, and the average proportion of the population which is uninsured before 2014 used as covariates. Results are consistent when testing inverse probability weighting and regression-based estimation from the `did` R package, and when testing two-way fixed effects estimation as in [@sun2021]. Only 7 states expand between 2015 and 2018, and when we evaluate patterns only in 2014 expanders the results are also consistent.
+
+Many states expanded Medicaid through 1115 waviers. These states were allowed to deviate from federally mandated expansion to adults under 138% of the poverty line, and while many states used waviers to expand coverage or target vulnerable groups, other states used the waviers to impose restrictions such as work requirements. As a sensitivity analysis, I tested excluding states from the exposed cohort if they expanded through 1115 waviers with restrictive eligibility criteria.
