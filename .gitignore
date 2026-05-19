@@ -54,3 +54,4 @@ rsconnect/
 *.pdf
 *.png
 *.xlsx*
+.claude/settings.local.json
