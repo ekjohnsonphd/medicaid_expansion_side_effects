@@ -19,6 +19,23 @@ medicaid_expansion <- fread("data/medicaid_expansion_raw_data.csv")
 colnames(medicaid_expansion) <- c("location_name","expansion","expansion_year","restricted")
 
 covariates <- fread("data/state_covariates_2010_2019.csv")
+# cov list: poverty_rate,median_hh_income,uninsured_rate,prop_under18,prop_over65,ave_prior_uninsured
+
+state_crosswalk <- data.table(
+  location_name = c("Alabama","Alaska","Arizona","Arkansas","California","Colorado",
+                 "Connecticut","Delaware","District of Columbia","Florida","Georgia",
+                 "Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky",
+                 "Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota",
+                 "Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire",
+                 "New Jersey","New Mexico","New York","North Carolina","North Dakota",
+                 "Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina",
+                 "South Dakota","Tennessee","Texas","Utah","Vermont","Virginia",
+                 "Washington","West Virginia","Wisconsin","Wyoming"),
+  state = c("AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID",
+                 "IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO",
+                 "MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA",
+                 "RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY")
+)
 
 # Filter to age-standardized and specific types of care
 dt <- dt[age_name == "Age/sex-standardized" & toc %in% c("AM","ED","IP","NF","RX","All toc")]
@@ -38,6 +55,14 @@ dt_agg <- dt[, lapply(.SD, sum),
 
 dt_agg[, toc := "All TOC"]
 dt <- rbind(dt, dt_agg)
+dt[, expanded := 0]
+dt[(expansion_year != 0) & (year_id >= expansion_year), expanded := 1]
+dt <- dt[state_crosswalk, on = "location_name"]
+
+dt |> 
+  group_by(payer, toc) |> 
+  write_csv_dataset("data/analysis/model_data/")
+
 
 test <- dt[toc == "IP" & payer == "mdcr"]
 t_model <- att_gt(
