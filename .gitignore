@@ -80,3 +80,7 @@ slides/figures/
 # EDA deck figures are regenerable
 slides/figures_eda/
 !slides/eda_deck.pdf
+
+# Results deck assets are regenerable
+slides/figures_res/
+!slides/results_deck.pdf
