@@ -76,3 +76,7 @@ slides/figures/
 
 # Deck PDF is tracked so it can be opened without recompiling
 !slides/medicaid_expansion_results.pdf
+
+# EDA deck figures are regenerable
+slides/figures_eda/
+!slides/eda_deck.pdf

@@ -1,0 +1,314 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+\usepackage{colortbl}
+\usepackage{array}
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, backgrounds}
+
+\definecolor{DeepNavy}{HTML}{2E4057}
+\definecolor{Teal}{HTML}{048A81}
+\definecolor{WarmOrange}{HTML}{E85D04}
+\definecolor{SoftPurple}{HTML}{9D4EDD}
+\definecolor{WarmGray}{HTML}{6C757D}
+\definecolor{LightGray}{HTML}{E9ECEF}
+\definecolor{Cream}{HTML}{FBF8F1}
+\definecolor{DeepRed}{HTML}{D62828}
+\definecolor{Gold}{HTML}{D4A03A}
+\definecolor{SoftWhite}{HTML}{FAFAFA}
+
+\setbeamercolor{normal text}{fg=DeepNavy, bg=SoftWhite}
+\setbeamercolor{structure}{fg=DeepNavy}
+\setbeamercolor{alerted text}{fg=DeepRed}
+\setbeamercolor{example text}{fg=Teal}
+\setbeamercolor{frametitle}{fg=DeepNavy, bg=SoftWhite}
+\setbeamercolor{title}{fg=DeepNavy}
+\setbeamercolor{subtitle}{fg=WarmGray}
+\setbeamercolor{block title}{bg=DeepNavy, fg=SoftWhite}
+\setbeamercolor{block body}{bg=LightGray, fg=DeepNavy}
+
+\usefonttheme{professionalfonts}
+\setbeamerfont{title}{size=\huge, series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{%
+    \hfill
+    \begin{beamercolorbox}[wd=3cm,ht=2.5ex,dp=1ex,right,rightskip=0.6cm]{page number}
+        \usebeamercolor[fg]{WarmGray}\scriptsize\insertframenumber
+    \end{beamercolorbox}
+    \vspace{0.3cm}
+}
+
+\newcommand{\transitionslide}[2]{%
+    {\setbeamercolor{normal text}{fg=SoftWhite,bg=DeepNavy}
+    \begin{frame}[plain]\vfill\begin{center}
+        {\huge\bfseries\textcolor{Gold}{#1}}\\[0.6cm]
+        {\large\textcolor{LightGray}{#2}}
+    \end{center}\vfill\end{frame}}
+}
+
+% Working-deck marker for unresolved choices
+\newcommand{\openq}[1]{%
+  \begin{center}
+  \begin{tikzpicture}
+    \node[fill=Gold!18, draw=Gold, line width=1pt, rounded corners=3pt,
+          inner sep=6pt, text width=0.80\paperwidth, align=left] {%
+      {\bfseries\color{Gold!60!black} OPEN}\quad\color{DeepNavy}#1};
+  \end{tikzpicture}
+  \end{center}}
+
+\graphicspath{{figures_eda/}}
+
+\begin{document}
+
+{\setbeamertemplate{footline}{}
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\huge\bfseries\color{DeepNavy} Knowing the Data Before the Model}\\[0.35cm]
+    {\large\color{WarmGray} DEX 2.0 spending and utilisation, 2010--2019}\\[1.1cm]
+    {\normalsize\color{DeepNavy} Emily Johnson}\\[0.15cm]
+    {\small\color{WarmGray} 31 August 2026 \quad$\cdot$\quad No models are fit anywhere in this deck}
+  \end{center}
+  \vfill
+\end{frame}}
+
+\transitionslide{What is in the file}{Shape, denominators, and one consequential choice}
+
+\begin{frame}{One file, 29,040 rows, and no gaps}
+  \vspace{0.35cm}
+  \begin{center}
+  {\large
+  \begin{tabular}{@{}l l@{}}
+    \toprule
+    \textbf{Dimension} & \textbf{Values} \\
+    \midrule
+    Location   & 51 states + DC, plus a United States row \\
+    Year       & 2010--2019, all ten equally represented \\
+    Payer      & Medicaid, Medicare, private, out-of-pocket \\
+    Type of care & AM, DV, ED, HH, IP, NF, RX \\
+    Age basis  & \textit{All ages} and \textit{Age/sex-standardized} \\
+    Cause      & Single row, ``All causes'' \\
+    \bottomrule
+  \end{tabular}}
+  \end{center}
+  \vspace{0.45cm}
+  {\footnotesize\color{WarmGray} Every state--year--payer has exactly 7 types of care: the panel is perfectly balanced, 2{,}040 state--year--payer cells. Spending columns have zero missing values.}
+\end{frame}
+
+\begin{frame}{Five outcome columns, three distinct denominators}
+  \vspace{0.3cm}
+  \begin{center}
+  {\large
+  \begin{tabular}{@{}l l l@{}}
+    \toprule
+    \textbf{Column} & \textbf{Denominator} & \textbf{Reads as} \\
+    \midrule
+    \texttt{spend\_per\_capita} & state residents & how much a state spends \\
+    \texttt{spend\_per\_bene}   & payer enrollees & how much an enrollee costs \\
+    \texttt{vol\_per\_capita}   & state residents & care per resident \\
+    \texttt{vol\_per\_bene}     & payer enrollees & care per enrollee \\
+    \texttt{spend\_per\_vol}    & units of care   & the price of a unit \\
+    \bottomrule
+  \end{tabular}}
+  \end{center}
+  \vspace{0.45cm}
+  {\footnotesize\color{WarmGray} \texttt{vol\_per\_bene} is per 1{,}000 enrollees. Out-of-pocket has no enrollee denominator: all 3{,}640 of its per-beneficiary values are missing by construction, which is every out-of-pocket row in the file.}
+\end{frame}
+
+\begin{frame}{The age basis decides whether the denominators mean anything}
+  \vspace{0.15cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.50\textheight,keepaspectratio]{age_basis.pdf}
+  \end{center}
+  \vspace{0.2cm}
+  {\footnotesize\color{WarmGray} California Medicaid, 2015. Under \textit{All ages} the implied population is 38.69M for every type of care --- the true state population. Under \textit{Age/sex-standardized} it ranges from 28M to 45M, because each type of care is reweighted by its own age profile. Standardised rates are comparable across states; they are not a population.}
+\end{frame}
+
+\begin{frame}{Both denominators are recoverable from the file}
+  \vspace{0.9cm}
+  \begin{center}
+  {\large
+  \begin{tabular}{@{}c@{\hspace{1.6cm}}c@{}}
+    $\text{enrollees} = \dfrac{\texttt{spend\_mean}}{\texttt{spend\_per\_bene}}$ &
+    $\text{population} = \dfrac{\texttt{spend\_mean}}{\texttt{spend\_per\_capita}}$ \\
+  \end{tabular}}
+  \end{center}
+  \vspace{0.9cm}
+  {\footnotesize\color{WarmGray} Checked against known values: the recovered 2015 populations are 321.8M for the United States, 38.69M for California, 27.55M for Texas. Recovered enrollee counts agree across all seven types of care within a state--year--payer, confirming a single shared denominator.}
+\end{frame}
+
+\transitionslide{The identity}{What per-capita spending is made of}
+
+\begin{frame}{Per-capita spending is three things multiplied together}
+  \vspace{0.55cm}
+  \begin{center}
+  {\Large\color{DeepNavy}
+  $\underbrace{\dfrac{\text{spend}}{\text{pop}}}_{\text{per capita}}
+   =
+   \underbrace{\dfrac{\text{spend}}{\text{vol}}}_{\text{price}}
+   \times
+   \underbrace{\dfrac{\text{vol}}{\text{enrollees}}}_{\text{use per enrollee}}
+   \times
+   \underbrace{\dfrac{\text{enrollees}}{\text{pop}}}_{\text{coverage}}$}
+  \end{center}
+  \vspace{0.4cm}
+  \begin{center}
+  {\large\color{WarmGray} and the middle two collapse to spend per enrollee}
+  \end{center}
+  \vspace{0.35cm}
+  {\footnotesize\color{WarmGray} An accounting identity, not an assumption. It reconciles exactly under \textit{All ages}: for 2014 expanders in 2016, \$6{,}213.5 $\times$ 24.5\% $=$ \$1{,}525.4, the reported per-capita figure to the dollar. It does \textbf{not} reconcile in the standardised data.}
+\end{frame}
+
+\transitionslide{Stepping through}{2014 expanders vs.\ states that never expanded}
+
+\begin{frame}{Coverage: expanders gain 4.5 points, non-expanders gain 0.5}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{coverage.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Medicaid enrollees as a share of state population, population-weighted. Dashed line is the last pre-expansion year. 25 expanders vs 19 never-expanders; the 7 later cohorts are held out throughout.}
+\end{frame}
+
+\begin{frame}{Spend per enrollee: flat in both groups}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{spb.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Medicaid spending per enrollee. From 2013 to 2016 this falls 0.4\% among expanders and 3.3\% among non-expanders. The level gap between the groups is present throughout the pre-period.}
+\end{frame}
+
+\begin{frame}{Volume per enrollee: a small rise among expanders}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{vpb.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Units of care per 1{,}000 Medicaid enrollees. From 2013 to 2016, $+3.8\%$ among expanders and $+0.8\%$ among non-expanders. Note that expanders sit \textit{below} non-expanders in levels for the whole period.}
+\end{frame}
+
+\begin{frame}{Price per unit: falls 4.1\% in both groups}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{price.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Medicaid spending per unit of volume. The 2013--2016 change is $-4.1\%$ in both groups, to one decimal place.}
+\end{frame}
+
+\begin{frame}{Spend per capita: the two groups separate after 2013}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{spc.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Medicaid spending per state resident. From 2013 to 2016, $+22.7\%$ among expanders and $+2.8\%$ among non-expanders.}
+\end{frame}
+
+\begin{frame}{All five components on one scale}
+  \vspace{0.15cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.56\textheight,keepaspectratio]{components.pdf}
+  \end{center}
+  \vspace{0.2cm}
+  {\footnotesize\color{WarmGray} Each series indexed to its own 2013 value: \textcolor{Teal}{\textbf{2014 expanders}}, \textcolor{WarmOrange}{\textbf{never expanded}}. Coverage and spend per capita move together; price, use per enrollee, and spend per enrollee do not separate.}
+\end{frame}
+
+\begin{frame}{The same numbers, 2013 to 2016}
+  \vspace{0.3cm}
+  \begin{center}
+  {\large
+  \begin{tabular}{@{}l r r@{}}
+    \toprule
+    \textbf{Component} & \textbf{Expanders} & \textbf{Never expanded} \\
+    \midrule
+    Coverage             & $+23.2\%$ & $+6.3\%$ \\
+    Price per unit       & $-4.1\%$  & $-4.1\%$ \\
+    Volume per enrollee  & $+3.8\%$  & $+0.8\%$ \\
+    Spend per enrollee   & $-0.4\%$  & $-3.3\%$ \\
+    \midrule
+    \textbf{Spend per capita} & $\mathbf{+22.7\%}$ & $\mathbf{+2.8\%}$ \\
+    \bottomrule
+  \end{tabular}}
+  \end{center}
+  \vspace{0.5cm}
+  {\footnotesize\color{WarmGray} Medicaid, all types of care, population-weighted. The bottom row is the product of the coverage row and the spend-per-enrollee row.}
+\end{frame}
+
+\transitionslide{Underneath the averages}{Where the group means come from}
+
+\begin{frame}{Every state's coverage path, not just the group mean}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{coverage_states.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} One line per state. The \textcolor{Teal}{\textbf{expander}} panel shows a common break at 2014 with varying step size; the \textcolor{WarmOrange}{\textbf{never-expander}} panel shows level differences but no common break.}
+\end{frame}
+
+\begin{frame}{States that gained more coverage gained more spending per capita}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{dose_response.pdf}
+  \end{center}
+  \vspace{0.15cm}
+  {\footnotesize\color{WarmGray} Each point is one state, 2013 to 2016: \textcolor{Teal}{\textbf{2014 expanders}}, \textcolor{WarmOrange}{\textbf{never expanded}}. $r = 0.80$; the fitted slope is \$55 per resident for each additional coverage point. Expanders average $+4.45$ points and $+\$301$; never-expanders average $+0.53$ points and $+\$6$.}
+\end{frame}
+
+\begin{frame}{The pattern by type of care}
+  \vspace{0.15cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{by_toc.pdf}
+  \end{center}
+  \vspace{0.2cm}
+  {\footnotesize\color{WarmGray} Percentage change 2013 to 2016, Medicaid; \textcolor{Teal}{\textbf{2014 expanders}} vs \textcolor{WarmOrange}{\textbf{never expanded}}. Per-enrollee measures are the two left panels; per-capita is on the right. Nursing facility and pharmacy behave differently from ambulatory and inpatient.}
+\end{frame}
+
+\begin{frame}{Medicare and private coverage move in parallel across both groups}
+  \vspace{0.2cm}
+  \begin{center}
+    \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{coverage_payers.pdf}
+  \end{center}
+  \vspace{0.2cm}
+  {\footnotesize\color{WarmGray} Enrollees as a share of population, by payer. Private coverage rises in both groups after 2013; Medicare rises steadily throughout with no break. Note the free vertical scale on each panel.}
+\end{frame}
+
+\transitionslide{Before modelling}{Four features of the data to carry forward}
+
+\begin{frame}{Four things the data forces on any model}
+  \vspace{-0.15cm}
+  \openq{\textbf{Out-of-pocket has no enrollee denominator.} Per-enrollee outcomes do not exist for it, so it compares only on per-capita and price terms.}
+  \vspace{0.08cm}
+  \openq{\textbf{The age basis is a real choice.} The decomposition holds under \textit{All ages} and fails under \textit{Age/sex-standardized}, which is what the models currently use.}
+  \vspace{0.08cm}
+  \openq{\textbf{Dental and home health exist in the file} but are excluded from the current five types of care, so any ``total'' is a partial total.}
+  \vspace{0.08cm}
+  \openq{\textbf{Coverage peaks in 2016 and drifts down after.} The post-period is not a plateau, which matters for reading event-study leads.}
+\end{frame}
+
+{\setbeamercolor{normal text}{fg=SoftWhite,bg=DeepNavy}
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\Large\color{LightGray} Every per-capita number in this project is}\\[0.6cm]
+    {\huge\bfseries\color{Gold} price $\times$ use per enrollee $\times$ coverage}\\[0.7cm]
+    {\Large\color{LightGray} Only the third term separates the two groups}\\[1.1cm]
+    {\footnotesize\color{WarmGray} Figures: \texttt{slides/make\_eda\_figures.R} \quad$\cdot$\quad Source: DEX 2.0, \textit{All ages}, 2010--2019}
+  \end{center}
+  \vfill
+\end{frame}}
+
+\end{document}
