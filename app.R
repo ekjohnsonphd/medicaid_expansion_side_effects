@@ -9,8 +9,8 @@ library(shinyWidgets)
 # ==============================================================================
 # Load reference data (static across analyses)
 # ==============================================================================
-medicaid_expansion <- fread("data/medicaid_expansion_raw_data.csv")
-colnames(medicaid_expansion) <- c("location_name", "expansion", "expansion_year", "restricted")
+# Columns already named: location_name, expansion_year, restricted (see R/prep_data.R)
+medicaid_expansion <- fread("data/medicaid_expansion_cohorts.csv")
 
 covariates <- fread("data/state_covariates_2010_2019.csv")
 

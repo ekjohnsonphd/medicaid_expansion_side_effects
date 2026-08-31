@@ -1,0 +1,52 @@
+location_name,impl_date,cohort_year,expansion_year,restricted,status_raw,adoption_year_raw
+Alabama,,,0,,Not Adopted,
+Alaska,2015-09-01,2016,2016,,Adopted,2016
+Arizona,2014-01-01,2014,2014,Yes,Adopted,2014
+Arkansas,2014-01-01,2014,2014,Yes,Adopted,2014
+California,2014-01-01,2014,2014,,Adopted,2014
+Colorado,2014-01-01,2014,2014,,Adopted,2014
+Connecticut,2014-01-01,2014,2014,,Adopted,2014
+Delaware,2014-01-01,2014,2014,,Adopted,2014
+District of Columbia,2014-01-01,2014,2014,,Adopted,2014
+Florida,,,0,,Not Adopted,
+Georgia,,,0,,Not Adopted,
+Hawaii,2014-01-01,2014,2014,,Adopted,2014
+Idaho,,,0,,Adopted,2014
+Illinois,2014-01-01,2014,2014,Yes,Adopted,2014
+Indiana,2015-02-01,2016,2016,,Adopted,2015
+Iowa,2014-01-01,2014,2014,Yes,Adopted,2014
+Kansas,,,0,,Not Adopted,
+Kentucky,2014-01-01,2014,2014,,Adopted,2014
+Louisiana,2016-07-01,2017,2017,,Adopted,2017
+Maine,2019-01-10,2020,0,,Adopted,2019
+Maryland,2014-01-01,2014,2014,,Adopted,2014
+Massachusetts,2014-01-01,2014,2014,Yes,Adopted,2014
+Michigan,2014-04-01,2015,2015,,Adopted,2014
+Minnesota,2014-01-01,2014,2014,,Adopted,2014
+Mississippi,,,0,,Not Adopted,
+Missouri,,,0,,Adopted,2014
+Montana,2016-01-01,2016,2016,,Adopted,2016
+Nebraska,,,0,,Adopted,2014
+Nevada,2014-01-01,2014,2014,,Adopted,2014
+New Hampshire,2014-08-15,2015,2015,,Adopted,2014
+New Jersey,2014-01-01,2014,2014,,Adopted,2014
+New Mexico,2014-01-01,2014,2014,,Adopted,2014
+New York,2014-01-01,2014,2014,,Adopted,2014
+North Carolina,,,0,,Adopted,2014
+North Dakota,2014-01-01,2014,2014,,Adopted,2014
+Ohio,2014-01-01,2014,2014,,Adopted,2014
+Oklahoma,,,0,Yes,Adopted,2014
+Oregon,2014-01-01,2014,2014,,Adopted,2014
+Pennsylvania,2015-01-01,2015,2015,,Adopted,2015
+Rhode Island,2014-01-01,2014,2014,Yes,Adopted,2014
+South Carolina,,,0,,Not Adopted,
+South Dakota,,,0,,Adopted,2014
+Tennessee,,,0,,Not Adopted,
+Texas,,,0,,Not Adopted,
+Utah,,,0,,Adopted,2014
+Vermont,2014-01-01,2014,2014,,Adopted,2014
+Virginia,2019-01-01,2019,0,,Adopted,2019
+Washington,2014-01-01,2014,2014,,Adopted,2014
+West Virginia,2014-01-01,2014,2014,,Adopted,2014
+Wisconsin,,,0,,Not Adopted,
+Wyoming,,,0,,Not Adopted,

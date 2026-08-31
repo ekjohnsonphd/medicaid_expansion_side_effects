@@ -50,8 +50,17 @@ rsconnect/
 
 
 *.csv
+
+# Small analysis-defining inputs are tracked; the bulk DEX extracts are not.
+!data/medicaid_expansion_raw_data.csv
+!data/medicaid_expansion_cohorts.csv
+!data/state_covariates_2010_2019.csv
+!results/*.csv
 *.html
 *.pdf
 *.png
 *.xlsx*
 .claude/settings.local.json
+
+# Derived model inputs (rebuilt by expansion_CSA.R)
+data/analysis/
