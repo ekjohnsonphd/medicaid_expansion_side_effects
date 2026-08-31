@@ -48,6 +48,18 @@ prep_components <- function(age_basis = "All ages") {
            spend_per_vol    = spend / vol,
            coverage         = 100 * bene / pop_ref)]
 
+  # All-payer total: does expansion raise total spending or reallocate it?
+  # Volume is not summable across payers (units differ by payer mix), so the
+  # all-payer row carries spending and coverage-free measures only.
+  tot <- p[, .(spend = sum(spend), vol = NA_real_, bene = NA_real_,
+               pop_ref = pop_ref[1]), by = .(location_name, year_id, toc)]
+  tot[, payer := "all"]
+  p <- rbind(p, tot, use.names = TRUE, fill = TRUE)
+  p[payer == "all", `:=`(spend_per_capita = spend / pop_ref,
+                         spend_per_bene = NA_real_, vol_per_capita = NA_real_,
+                         vol_per_bene = NA_real_, spend_per_vol = NA_real_,
+                         coverage = NA_real_)]
+
   p <- merge(p, coh[, .(location_name, expansion_year, restricted)], by = "location_name")
   p <- merge(p, cov, by = c("location_name", "year_id"))
   p[, ave_prior_uninsured := mean(uninsured_rate[year_id %in% c(2012, 2013)]), by = location_name]

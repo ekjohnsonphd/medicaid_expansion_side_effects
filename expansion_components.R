@@ -33,13 +33,16 @@ OUTCOMES <- c("spend_per_capita", "spend_per_bene", "vol_per_capita",
               "vol_per_bene", "spend_per_vol")
 
 grid <- CJ(basis = names(PANELS), sample = names(SAMPLES), est = names(ESTS),
-           payer = c("mdcd", "mdcr", "oop", "priv"),
+           payer = c("all", "mdcd", "mdcr", "oop", "priv"),
            toc = c("Total", "AM", "ED", "IP", "NF", "RX"),
            outcome = OUTCOMES, unique = TRUE)
 # Coverage is one series per payer; add it on the Total rows only.
 covg <- unique(grid[toc == "Total"])[, outcome := "coverage"]
 grid <- rbind(grid, unique(covg))
 grid <- grid[!(payer == "oop" & outcome %chin% c("spend_per_bene", "vol_per_bene", "coverage"))]
+# The all-payer row is spending only: volume and enrollees are not comparable
+# across payers, so only per-capita spending is defined for it.
+grid <- grid[!(payer == "all" & outcome != "spend_per_capita")]
 grid[, mod := .I]
 
 message("Fitting ", nrow(grid), " models...")

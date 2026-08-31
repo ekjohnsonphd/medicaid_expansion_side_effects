@@ -24,6 +24,8 @@ Expansion cohorts are assigned by **first full calendar year of exposure**: a st
 
 The panel is truncated at 2018. Maine and Virginia expanded in 2019, so no post-expansion period is observable for them; they serve as controls through 2018.
 
+**The estimation sample is the 2014 cohort only**: 25 states expanding on 1 January 2014 against the 19 that had not expanded by 2018. The 2015--2017 cohorts (MI, NH, PA, IN, AK, MT, LA) are excluded because they contain 3, 3 and 1 states, and at that size neither the ATT nor its pre-test is reliable --- see the placebo evidence below. With them excluded there is a single treatment date, so the design reduces to a standard two-group difference-in-differences and the staggered-adoption machinery is not load-bearing. Estimates on the full staggered sample are retained as a robustness check.
+
 An earlier version of the expansion file coded seven states (ID, UT, NE, MO, OK, SD, NC) as 2014 expanders. None of these expanded before 2020, and all are controls here. Results computed before this correction are not comparable to those reported now.
 
 ## Model

@@ -84,3 +84,7 @@ slides/figures_eda/
 # Results deck assets are regenerable
 slides/figures_res/
 !slides/results_deck.pdf
+
+# Survey deck figures are regenerable
+slides/figures_survey/
+!slides/survey_deck.pdf
