@@ -1,5 +1,4 @@
 ---
-as a---
 title: "Methods Notes"
 format: docx
 bibliography: references.bib
@@ -7,12 +6,42 @@ bibliography: references.bib
 
 ## Data
 
-This analysis uses DEX 2.0 age-standardized data at the state level. Data includes AM, ED, IP, NF, and RX types of care, and an aggregate of the listed TOC. Medicaid expansion status is sourced from KFF. The time series for this data is 2010-2019. Covariates (proportion uninsured, state median income, state poverty level, proportion \<65 and proportion \> 18) are sourced from CPS.
+This analysis uses DEX 2.0 age-standardized data at the state level. Data includes AM, ED, IP, NF, and RX types of care, and an aggregate of the listed TOC. The DEX file also reports dental (DV) and home health (HH); these are excluded, so the aggregate is labelled `Total` rather than "all types of care". Medicaid expansion status is sourced from KFF. The time series for this data is 2010--2019. Covariates (proportion uninsured, state median income, state poverty level, proportion \<18 and proportion \>65) are sourced from CPS.
+
+Aggregating across types of care is valid for the per-capita and per-beneficiary outcomes: within a payer the DEX denominators are common across TOC (implied beneficiary counts agree to within 1% across TOC in a given state-year-payer), and the per-capita figures are age/sex-standardized rates on a shared standard population. It is *not* valid for `spend_per_vol`, which is a unit price -- adding a price per prescription to a price per nursing facility stay is meaningless. The aggregate price is instead rebuilt as total spending over total volume.
+
+## Treatment definition
+
+Expansion cohorts are assigned by **first full calendar year of exposure**: a state that expanded on 1 January is assigned that year, and a state that expanded later in the year is assigned the following year. Assignments and the underlying implementation dates are recorded in `data/medicaid_expansion_cohorts.csv`.
+
+| Cohort | n | States |
+|---|---|-----|
+| 2014 | 25 | AZ, AR, CA, CO, CT, DE, DC, HI, IL, IA, KY, MD, MA, MN, NV, NJ, NM, NY, ND, OH, OR, RI, VT, WA, WV |
+| 2015 | 3 | MI (Apr 2014), NH (Aug 2014), PA (Jan 2015) |
+| 2016 | 3 | IN (Feb 2015), AK (Sep 2015), MT (Jan 2016) |
+| 2017 | 1 | LA (Jul 2016) |
+| Never | 19 | AL, FL, GA, ID, KS, ME, MS, MO, NE, NC, OK, SC, SD, TN, TX, UT, VA, WI, WY |
+
+The panel is truncated at 2018. Maine and Virginia expanded in 2019, so no post-expansion period is observable for them; they serve as controls through 2018.
+
+An earlier version of the expansion file coded seven states (ID, UT, NE, MO, OK, SD, NC) as 2014 expanders. None of these expanded before 2020, and all are controls here. Results computed before this correction are not comparable to those reported now.
 
 ## Model
 
-This is an event study difference-in-difference model which uses the methods described in [@callaway2021] to account for staggered adoption of Medicaid expansion. All states that expanded between 2014 and 2018 are included as treated; Maine and Virginia, which expanded in 2019, are censored in 2019 since we cannot observe trends post expansion. The control group is defined as not-yet-expanded states, including both states that never expand within our period of analysis and states that expanded after each year of observation.
+This is an event study difference-in-difference model using the methods of @callaway2021, with not-yet-expanded states as the control group.
 
-The main analysis uses doubly robust nonparametric estimation as described in [@callaway2021], with state median income, state poverty level, the proportion of the population \<18, the proportion of the population \> 65, and the average proportion of the population which is uninsured before 2014 used as covariates. Results are consistent when testing inverse probability weighting and regression-based estimation from the `did` R package, and when testing two-way fixed effects estimation as in [@sun2021]. Only 7 states expand between 2015 and 2018, and when we evaluate patterns only in 2014 expanders the results are also consistent.
+The **main specification** uses outcome regression (`est_method = "reg"`) with state median income, state poverty level, the proportion of the population \<18, the proportion \>65, and the average proportion uninsured before 2014 as covariates.
 
-Many states expanded Medicaid through 1115 waviers. These states were allowed to deviate from federally mandated expansion to adults under 138% of the poverty line, and while many states used waviers to expand coverage or target vulnerable groups, other states used the waviers to impose restrictions such as work requirements. As a sensitivity analysis, I tested excluding states from the exposed cohort if they expanded through 1115 waviers with restrictive eligibility criteria.
+Doubly robust and inverse probability weighting estimation were the original intent, but neither is feasible with this covariate set. With 51 states the propensity score separates perfectly: fitting it on more than two non-collinear covariates returns fitted probabilities of 0 or 1 and leaves most group-time cells unestimated. This is not a consequence of the thin cohorts -- restricted to the 2014 cohort alone (25 treated, 19 control) the doubly robust estimator fails on every cell. The **sensitivity specification** therefore uses doubly robust estimation with a reduced covariate set (average prior uninsurance and median income). Among estimates that are significant in the main specification, the two specifications agree in sign in 14 of 16 cases and correlate at 0.81.
+
+## Parallel trends
+
+The joint Wald pre-test reported by the `did` package is **not interpretable on the full staggered sample**. It rejects for all 108 payer--TOC--outcome combinations, including placebo outcomes that expansion has no plausible route to affect (Medicare nursing-facility volume per beneficiary, $W = 377$). The Wald statistic scales with the number of pre-treatment cells (3 cells: $W = 1.9$; 18 cells: $W = 148$; 22 cells: $W = 234$), which is the signature of a covariance matrix estimated from too few clusters relative to the number of restrictions. The thin cohorts are the source: with one treated state in 2017 and three each in 2015 and 2016, those cells carry almost no information.
+
+Restricted to the 2014 cohort the test is informative, and 73 of 108 combinations pass at $p \ge 0.05$. Pass rates differ sharply by payer: Medicaid 90%, private 70%, Medicare 67%, out-of-pocket 28%. **Every out-of-pocket spending-per-capita model fails the pre-test** ($p$ from 0.0001 to 0.049), so out-of-pocket displacement cannot be identified in these data with this design.
+
+## Sensitivity analyses
+
+Many states expanded Medicaid through 1115 waivers. These states were allowed to deviate from federally mandated expansion to adults under 138% of the poverty line, and while many states used waivers to expand coverage or target vulnerable groups, other states used the waivers to impose restrictions such as work requirements. As a sensitivity analysis, states are excluded from the exposed cohort if they expanded through 1115 waivers with restrictive eligibility criteria (`restricted` in the cohort file).
+
+Two-way fixed effects estimation as in @sun2021 is implemented in `expansion_SA.R`.

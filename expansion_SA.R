@@ -2,7 +2,6 @@ library(data.table)
 library(tidyverse)
 library(arrow)
 library(fixest)  # Sun & Abraham (2021) via sunab()
-library(modelsummary)
 library(broom)
 library(kableExtra)
 
@@ -13,8 +12,7 @@ OUTCOME_VAR <- "spend_per_bene_mean"
 # Load and prepare data
 # ==============================================================================
 dt <- fread("data/dex/IHME_USA_HEALTH_CARE_SPENDING_CAUSE_COUNTY_2010_2019_STATE_NATIONAL_TOC_PAYER_2010_2019_Y2025M02D13.CSV")
-medicaid_expansion <- fread("data/medicaid_expansion_raw_data.csv")
-colnames(medicaid_expansion) <- c("location_name","expansion","expansion_year")
+medicaid_expansion <- fread("data/medicaid_expansion_cohorts.csv")
 
 covariates <- fread("data/state_covariates_2010_2019.csv")
 
