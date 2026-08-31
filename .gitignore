@@ -64,3 +64,15 @@ rsconnect/
 
 # Derived model inputs (rebuilt by expansion_CSA.R)
 data/analysis/
+
+# LaTeX build artifacts
+*.aux
+*.nav
+*.snm
+*.toc
+*.out
+*.log
+slides/figures/
+
+# Deck PDF is tracked so it can be opened without recompiling
+!slides/medicaid_expansion_results.pdf
