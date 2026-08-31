@@ -36,9 +36,25 @@ Doubly robust and inverse probability weighting estimation were the original int
 
 ## Parallel trends
 
-The joint Wald pre-test reported by the `did` package is **not interpretable on the full staggered sample**. It rejects for all 108 payer--TOC--outcome combinations, including placebo outcomes that expansion has no plausible route to affect (Medicare nursing-facility volume per beneficiary, $W = 377$). The Wald statistic scales with the number of pre-treatment cells (3 cells: $W = 1.9$; 18 cells: $W = 148$; 22 cells: $W = 234$), which is the signature of a covariance matrix estimated from too few clusters relative to the number of restrictions. The thin cohorts are the source: with one treated state in 2017 and three each in 2015 and 2016, those cells carry almost no information.
+The joint Wald pre-test reported by the `did` package is **not interpretable on the full staggered sample**, because the test is severely oversized when treated cohorts are small. The cohorts here are 25, 3, 3 and 1 states.
 
-Restricted to the 2014 cohort the test is informative, and 73 of 108 combinations pass at $p \ge 0.05$. Pass rates differ sharply by payer: Medicaid 90%, private 70%, Medicare 67%, out-of-pocket 28%. **Every out-of-pocket spending-per-capita model fails the pre-test** ($p$ from 0.0001 to 0.049), so out-of-pocket displacement cannot be identified in these data with this design.
+Each non-2014 cohort rejects on its own, and the smaller the cohort the harder it rejects: $g=2015$ (3 states) gives $W = 20.0$, $g=2016$ (3 states) $W = 64.1$, and $g=2017$ (Louisiana alone) $W = 308.2$, against $W = 2.8$, $p = 0.42$ for the 25-state 2014 cohort. Louisiana contributes 81.5 of the roughly 107 total squared $t$-statistics across the 18 pre-treatment cells, including one cell at $|t| = 7.1$.
+
+This is a variance-estimation artifact, not evidence about trends. The group-time ATT for a one-state cohort is that state's change minus the control average, and its sampling variance requires the variance of a single treated unit's idiosyncratic shock, which is not identified from one observation. The influence-function formula still returns a number, and that number is too small.
+
+A placebo confirms the size distortion directly (`R/pretest_placebo.R`). Taking only the never-expanded states and labelling $k$ of them as a fake cohort, so that no treatment exists and a correctly sized test would reject 5% of the time:
+
+| Fake cohort size | Pre-test rejects | ATT falsely significant |
+|---|---|---|
+| 1 state | 88.5% | 40.0% |
+| 2 states | 76.0% | --- |
+| 3 states | 65.0% | 11.5% |
+| 6 states | 33.5% | 12.5% |
+| 10 states | 36.5% | 10.5% |
+
+Two consequences. First, pre-test results on the staggered sample carry no information and should not be reported as evidence for or against parallel trends. Second, the distortion is not confined to the diagnostic: the ATT itself is falsely significant 40% of the time for a one-state cohort, so the thin cohorts contaminate the pooled staggered estimates as well. This is the primary argument for treating the 2014 cohort as the estimation sample.
+
+Restricted to the 2014 cohort the test is informative. On the age-standardized basis 73 of 108 payer--type-of-care--outcome combinations pass at $p \ge 0.05$, with pass rates of 90% for Medicaid, 70% for private, 67% for Medicare and 28% for out-of-pocket; every out-of-pocket spending-per-capita model fails.
 
 ## Sensitivity analyses
 

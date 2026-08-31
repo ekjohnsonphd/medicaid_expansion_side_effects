@@ -232,24 +232,24 @@
   {\footnotesize\color{WarmGray} Each point is one payer--setting--outcome combination ($n=108$). 0 of 108 pass on the staggered sample; 73 of 108 pass on the 2014 cohort.}
 \end{frame}
 
-\begin{frame}{The Wald statistic scales with the number of pre-cells, not with the outcome}
-  \vspace{0.5cm}
+\begin{frame}{The pre-test is oversized when treated cohorts are small}
+  \vspace{0.35cm}
   \begin{center}
   {\large
-  \begin{tabular}{@{}l r r@{}}
+  \begin{tabular}{@{}l r r r@{}}
     \toprule
-    \textbf{Sample} & \textbf{Pre-cells} & \textbf{Wald $W$} \\
+    \textbf{Fake cohort size} & \textbf{Pre-test rejects} & \textbf{ATT falsely sig.} \\
     \midrule
-    2014 cohort only            &  3 &   1.9 \\
-    All cohorts                 & 18 & 148.4 \\
-    All cohorts, universal base & 22 & 233.6 \\
-    \midrule
-    \multicolumn{2}{@{}l}{\itshape Placebo: Medicare NF volume per beneficiary} & \textcolor{DeepRed}{377.3} \\
+    1 state   & 88.5\% & 40.0\% \\
+    2 states  & 76.0\% & --- \\
+    3 states  & 65.0\% & 11.5\% \\
+    6 states  & 33.5\% & 12.5\% \\
+    10 states & 36.5\% & 10.5\% \\
     \bottomrule
   \end{tabular}}
   \end{center}
-  \vspace{0.7cm}
-  {\footnotesize\color{WarmGray} Medicaid spending per capita, all care, except where noted. The placebo outcome has no plausible route by which expansion could affect it.}
+  \vspace{0.45cm}
+  {\footnotesize\color{WarmGray} Placebo: never-expanded states only, $k$ of them labelled as a fake cohort. No treatment exists, so a correctly sized test rejects 5\% of the time. The real cohorts are 25, 3, 3 and 1 states. 200 replications each; \texttt{R/pretest\_placebo.R}.}
 \end{frame}
 
 \begin{frame}{Pre-test pass rates differ sharply by payer}
