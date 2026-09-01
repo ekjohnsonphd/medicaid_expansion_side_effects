@@ -1,0 +1,208 @@
+% A0 portrait poster, 841 x 1189 mm.
+%
+% Plain LaTeX: this machine has TeX Live basic, without beamerposter or
+% tikzposter. Panels are minipages rather than TikZ nodes, because a TikZ node
+% with `text width` plus an inline \fontsize drops interword spaces in the
+% heading (verified: "The question" renders as "Thequestion").
+\documentclass[final]{article}
+
+\usepackage[paperwidth=841mm,paperheight=1189mm,top=26mm,bottom=26mm,left=28mm,right=28mm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+\usepackage{array}
+
+\definecolor{DeepNavy}{HTML}{2E4057}
+\definecolor{Teal}{HTML}{048A81}
+\definecolor{WarmGray}{HTML}{6C757D}
+\definecolor{LightGray}{HTML}{C9D1D6}
+\definecolor{Gold}{HTML}{D4A03A}
+\definecolor{PaleTeal}{HTML}{EAF4F3}
+
+\hbadness=10000  % ragged-right short lines are expected, not defects
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\color{DeepNavy}
+
+% --- geometry ---------------------------------------------------------------
+\newlength{\colw}   \setlength{\colw}{245mm}
+\newlength{\colgap} \setlength{\colgap}{23mm}
+\newlength{\colh}   \setlength{\colh}{830mm}
+\newlength{\figw}   \setlength{\figw}{\colw}
+\newlength{\hpw}    \setlength{\hpw}{\colw}\addtolength{\hpw}{-18mm}
+
+% --- type scale -------------------------------------------------------------
+\newcommand{\Body}[1]{{\fontsize{30}{41}\selectfont\RaggedRight #1\par}}
+\newcommand{\Small}[1]{{\fontsize{24}{32}\selectfont\color{WarmGray}\RaggedRight #1\par}}
+
+% --- panels -----------------------------------------------------------------
+\newcommand{\panel}[2]{%
+  \noindent\begin{minipage}[t]{\colw}%
+    {\color{LightGray}\rule{\colw}{2.5pt}}\\[5mm]
+    {\fontsize{40}{48}\selectfont\bfseries\color{DeepNavy}\RaggedRight #1\par}
+    \vspace{6mm}
+    #2
+  \end{minipage}}
+
+% Highlighted panel: the poster's main finding.
+% No [t] on the inner minipage -- with [t] the box's top rides above the current
+% baseline and overlaps the panel above it.
+\newcommand{\hpanel}[2]{%
+  \noindent\colorbox{PaleTeal}{%
+  \begin{minipage}{\hpw}%
+    \vspace{7mm}
+    {\color{Teal}\rule{\hpw}{5pt}}\\[5mm]
+    {\fontsize{40}{48}\selectfont\bfseries\color{Teal}\RaggedRight #1\par}
+    \vspace{6mm}
+    #2
+    \vspace{7mm}
+  \end{minipage}}}
+
+\begin{document}
+
+% ============================== HEADER ======================================
+\begin{center}
+  {\fontsize{88}{100}\selectfont\bfseries Who Pays After Medicaid Expansion?}\\[8mm]
+  {\fontsize{44}{54}\selectfont\color{WarmGray} Cross-payer effects on health spending in US states, 2010--2018}\\[11mm]
+  {\fontsize{38}{46}\selectfont Emily Johnson}\\[5mm]
+  {\fontsize{28}{36}\selectfont\color{WarmGray} Wennberg International Collaborative $\cdot$ September 2026}
+\end{center}
+\vspace{9mm}
+{\color{Teal}\rule{\textwidth}{4pt}}
+\vspace{11mm}
+
+% ============================== COLUMNS =====================================
+\noindent
+% ---------------- column 1 ----------------
+\begin{minipage}[t][\colh][t]{\colw}
+\panel{The question}{
+  \Body{Medicaid expansion raised Medicaid enrollment and Medicaid spending. That much is
+  established across a large literature.}
+  \vspace{5mm}
+  \Body{Much less is known about what happened to \textbf{everyone else's} spending. If
+  expansion pulled people out of private coverage, or changed what providers collect from
+  other payers, it should show up in Medicare, private and out-of-pocket spending.}
+  \vspace{5mm}
+  \Body{We estimate those cross-payer effects, and report how large a spillover these data
+  could have detected.}
+}
+\vfill
+\panel{Data}{
+  \Body{IHME Disease Expenditure Project (DEX 2.0): state-level spending and utilisation by
+  payer and type of care, 2010--2018.}
+  \vspace{5mm}
+  \Body{50 states and DC. Four payers: Medicaid, Medicare, private, out-of-pocket. Five
+  settings: ambulatory, emergency, inpatient, nursing facility, pharmacy.}
+  \vspace{5mm}
+  \Body{Enrollee counts and state population are recovered from the reported ratios, so
+  coverage is measured inside the same source as spending.}
+}
+\vfill
+\panel{Design}{
+  \Body{Difference-in-differences comparing the \textbf{25 states that expanded on 1 January
+  2014} with the \textbf{19 that had not expanded by 2018}.}
+  \vspace{5mm}
+  \Body{Callaway and Sant'Anna (2021) group-time estimator with never-expanded controls,
+  adjusting for state poverty, median income, pre-expansion uninsurance and age structure.
+  Standard errors clustered by state.}
+  \vspace{5mm}
+  \Body{Later-expanding states are excluded. The 2015--2017 cohorts contain 3, 3 and 1
+  states, and at that size the estimator's variance is not reliably identified.}
+}
+
+\end{minipage}
+\hspace{\colgap}
+% ---------------- column 2 ----------------
+\begin{minipage}[t][\colh][t]{\colw}
+\panel{Expansion moved coverage}{
+  \includegraphics[width=\figw]{figures/fig_coverage.pdf}
+  \vspace{5mm}
+  \Body{Medicaid coverage rises \textbf{3.7 points} (SE 0.8). Private coverage falls
+  \textbf{2.2 points} (SE 0.4). Medicare does not move.}
+  \vspace{4mm}
+  \Small{A strong first stage: a null on spending is not a null on treatment.}
+}
+\vspace{22mm}
+\hpanel{It did not move anyone else's spending}{
+  \includegraphics[width=\hpw]{figures/fig_null.pdf}
+  \vspace{5mm}
+  \Body{Medicaid spending per capita rises \textbf{18\%}. Across Medicare, private and
+  out-of-pocket spending, in every one of the five settings, \textbf{no estimate is
+  distinguishable from zero}.}
+}
+\vfill
+\panel{Spending has three parts}{
+  \Body{\[\frac{\text{spend}}{\text{pop}}=\frac{\text{spend}}{\text{vol}}\times\frac{\text{vol}}{\text{enrollees}}\times\frac{\text{enrollees}}{\text{pop}}\]}
+  \vspace{2mm}
+  \Body{Price, use per enrollee, and coverage. An accounting identity, so each channel is
+  estimated separately and read against the others.}
+}
+\end{minipage}
+\hspace{\colgap}
+% ---------------- column 3 ----------------
+\begin{minipage}[t][\colh][t]{\colw}
+\panel{What we can rule out}{
+  \Body{Effect on spending per capita, all care, as a share of the pre-expansion level:}
+  \vspace{6mm}
+  {\fontsize{29}{42}\selectfont
+  \begin{tabular}{@{}l r l@{}}
+    \toprule
+    \textbf{Payer} & \textbf{Effect} & \textbf{95\% CI} \\
+    \midrule
+    Medicaid      & $+17.9\%$ & $[+10.2,\ +25.6]$ \\
+    \midrule
+    Medicare      & $+0.4\%$  & $[-2.2,\ +2.9]$ \\
+    Private       & $+1.7\%$  & $[-3.2,\ +6.7]$ \\
+    Out-of-pocket & $-5.2\%$  & $[-21.7,\ +11.2]$ \\
+    \bottomrule
+  \end{tabular}\par}
+  \vspace{7mm}
+  \Body{The Medicare and private nulls are informative: spillovers beyond roughly
+  \textbf{3\%} and \textbf{7\%} are inconsistent with these data.}
+  \vspace{5mm}
+  \Body{The out-of-pocket null is not. Its interval spans a 22\% fall to an 11\% rise, so
+  this design cannot speak to household spending.}
+}
+\vfill
+\panel{Two patterns worth noting}{
+  \includegraphics[width=\figw]{figures/fig_private.pdf}
+  \vspace{5mm}
+  \Body{Private spending \textbf{per enrollee} is positive in all six panels
+  ($+4.9\%$ overall, CI $[-0.9,\ +10.6]$), while the same effect \textbf{per capita} sits at
+  zero, because private coverage shrank. That is what compositional change looks like:
+  lower-cost people moving from private coverage to Medicaid. Suggestive, not significant.}
+  \vspace{5mm}
+  \Body{Emergency spending per enrollee also rises for both Medicare ($+11.2$, SE 8.6) and
+  private ($+3.7$, SE 2.8) --- the only outcome on which both non-Medicaid payers move
+  together.}
+}
+\vfill
+\panel{Limitations}{
+  \Body{Estimates describe 2014 expanders only.}
+  \vspace{4mm}
+  \Body{Out-of-pocket has no enrollee denominator in DEX, so it is compared per capita only.}
+  \vspace{4mm}
+  \Body{Medicaid price per unit fails the pre-trend test and is not interpreted.}
+}
+\end{minipage}
+
+\vspace{10mm}
+{\color{Teal}\rule{\textwidth}{4pt}}
+\vspace{10mm}
+
+\begin{center}
+  {\fontsize{46}{58}\selectfont\bfseries
+  Expansion moved coverage and Medicaid spending, and left Medicare and private spending
+  where they were.}\\[7mm]
+  {\fontsize{31}{40}\selectfont\color{WarmGray}
+  The absence of spillover is a result, not a gap: effects above 3\% for Medicare and 7\%
+  for private are ruled out. For out-of-pocket spending, these data cannot yet say.}
+\end{center}
+
+\end{document}

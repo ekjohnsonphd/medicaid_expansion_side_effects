@@ -88,3 +88,7 @@ slides/figures_res/
 # Survey deck figures are regenerable
 slides/figures_survey/
 !slides/survey_deck.pdf
+
+# Poster figures are regenerable; the poster PDF is tracked
+poster/figures/
+!poster/poster.pdf
