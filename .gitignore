@@ -89,9 +89,11 @@ slides/figures_res/
 slides/figures_survey/
 !slides/survey_deck.pdf
 
-# Poster figures are regenerable; the poster PDF is tracked
+# Poster figures are regenerable; the poster PDFs are tracked
 poster/figures/
-!poster/poster.pdf
+poster/pv_*.png
+!poster/poster_band.pdf
+!poster/poster_lines.pdf
 
 # Worktree-local symlink to the gitignored DEX source in the main checkout
 data/dex
