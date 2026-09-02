@@ -14,46 +14,64 @@ format:
     keep-typ: false
 ---
 
-<!-- ===========================================================
-     Everything below is editable text. Panels are `##` headings;
-     `###` marks a highlighted panel --- panels 2 and 3 carry the two
-     findings, so both are highlighted and the setup and null panels are not.
-     Bold text renders in teal. `#colbreak()` blocks move content between
-     columns.
-
-     Figures come from R/poster_assets.R. To switch figure idiom, run one of
-     these from the repository root and re-render:
-       Rscript -e 'source("R/poster_assets.R"); use_style("band")'
-       Rscript -e 'source("R/poster_assets.R"); use_style("lines")'
-     Currently: lines. The band idiom adds a dashed counterfactual and a 95%
-     shaded band; if you switch, the figure notes should say so.
-
-     Render with:  quarto render poster/poster.qmd
-     =========================================================== -->
-
-## The question
+## The research question
 
 In 2014, the Affordable Care Act offered states the option of expanding Medicaid coverage
 and opened the Marketplace for private insurance. As a result, total Medicaid spending in
-expansion states increased.
+expansion states increased as newly eligibles were covered.
 
 We investigate what happened to enrollment, spending and utilization during Medicaid expansion
 for Medicaid, Medicare, and private insurance across states.
 
 ## Data and design
 
-IHME Disease Expenditure Project (DEX): state-level spending and encounters by payer
-and setting, 2010--2018. Uninsurance from CPS.
+IHME Disease Expenditure Project (DEX 2.0): state-level spending and encounters by payer
+and setting, all ages, 2010--2018. Uninsurance from CPS. **44 states, 396 state-years** ---
+the **25** that expanded on 1 January 2014 and the **19** that never expanded. Later
+cohorts are dropped (n ≤ 3 per year).
 
-Difference-in-differences comparing the **25 states that expanded on 1 January 2014** with
-the **19 that never expanded**. Callaway and Sant'Anna (2021) group-time estimator,
-never-treated controls, adjusting for poverty, median income, pre-expansion uninsurance and
-age structure. Standard errors clustered by state, multiplier bootstrap.
+Callaway and Sant'Anna (2021) group-time difference-in-differences. With one treated
+cohort, the estimand is the effect in year $t$ on expansion states ($D=1$):
 
 ```{=typst}
-#note[Later-expanding cohorts are excluded due to small sample size (n ≤ 3 each year).]
+#block(width: 100%, above: 7mm, below: 7mm)[#set text(size: 26pt)
+$ "ATT"(t) = bb(E) [Y_t (1) - Y_t (0) | D = 1] $]
 ```
 
+$Y_t(0)$ is unobserved after 2013. Writing $\Delta Y_t = Y_t - Y_{2013}$, it is imputed
+from the never-expanded states by regressing that change on covariates $X$ --- poverty
+rate, median household income, pre-expansion uninsurance, and the shares under 18 and
+over 65:
+
+```{=typst}
+#block(width: 100%, above: 7mm, below: 7mm)[#set text(size: 26pt)
+$ "ATT"(t) = bb(E) [Delta Y_t | D=1] - bb(E) [m_t (X) | D=1] $
+$ m_t (X) = bb(E) [Delta Y_t | X, D=0] $]
+```
+
+The event-study figures plot $\mathrm{ATT}(t)$; the tables report its post-period average.
+
+```{=typst}
+#block(width: 100%, above: 7mm, below: 7mm)[#set text(size: 26pt)
+$ overline("ATT") = 1/5 sum_(t=2014)^2018 "ATT"(t) $]
+```
+
+**Inference** is a multiplier bootstrap, 1,000 draws, clustered on state. **Parallel
+trends** is a Wald test that $\mathrm{ATT}(t)=0$ in the placebo years 2011--2013.
+**Multiplicity** is Benjamini--Hochberg across the 36 spending estimates.
+
+## Limitations
+
+Estimates describe 2014 expanders and non-expanders only.
+
+**Out-of-pocket spending is not included in analysis.** Uninsured spending
+and out-of-pocket deductibles or copays for the insured cannot be distinguished in DEX.
+
+Private coverage changes cannot be attributed to individual switching.
+
+```{=typst}
+#colbreak()
+```
 ## 1. Expansion covered the uninsured
 
 ![](figures/f1_coverage.png)
@@ -69,19 +87,16 @@ age structure. Standard errors clustered by state, multiplier bootstrap.
 | Uninsured | −1.38 | [−2.48, −0.28] | 0.30 |
 | Private   | −2.16 | [−3.07, −1.24] | 0.96 |
 
-Medicaid rose **3.7 points**. The uninsured rate fell **1.4 points** further than in control
+Medicaid coverage rose **3.7 points** more in expansion states. The uninsured rate fell **1.4 points** further than in control
 states. Private insurance increased with the Marketplace in both settings, to a greater extent in non-expansion states.
 
-```{=typst}
-#colbreak()
-```
 
-### 2. New enrollees had similar healthcare consumption
+### 2. New Medicaid enrollees had similar healthcare consumption
 
 ![](figures/f2_medicaid.png)
 
 ```{=typst}
-#note[Difference-in-differences effect at each year relative to 2014, as a percentage of the pre-expansion level in expansion states. Points left of the dashed line are the parallel-trends pre-test made visible. 95% intervals.]
+#note[Difference-in-differences effect at each year relative to 2014, as a percentage of the pre-expansion level in expansion states. 95% intervals from multiplier bootstrap.]
 ```
 
 Enrollment rose **19.9%** and spending per resident rose **18.0%** (SE 3.9). Spending per
@@ -90,7 +105,7 @@ enrollee did not follow: **−3.3%** (SE 4.4).
 Against a pre-expansion **$5,649** per enrollee, the marginal enrollee cost roughly
 **$4,500** per year.
 
-### 3. Private insurance did not shrink to pay for it
+### 3. Weak evidence of increased private spending
 
 ![](figures/f3_private.png)
 
@@ -110,9 +125,6 @@ marketplace enrollees joined it.
 #note[Axes as in panel 2. Encounters are not summed across settings: a prescription fill and a hospital stay are not the same unit.]
 ```
 
-```{=typst}
-#colbreak()
-```
 
 ## 4. Nothing else moved
 
@@ -148,12 +160,3 @@ one clears 5% before correction and **none survives it**.
 ```{=typst}
 #note[Effect as % of the pre-2014 level (SE). \* survives Benjamini--Hochberg correction across the 36 estimates. Every Medicaid model passes the parallel-trends pre-test; private is borderline at $p = 0.07$.]
 ```
-
-## Limitations
-
-Estimates describe 2014 expanders and non-expanders only.
-
-**Out-of-pocket spending is not included in analysis.** Uninsured spending
-and out-of-pocket deductibles or copays for the insured cannot be distinguished in DEX.
-
-Private coverage changes cannot be attributed to individual switching.
