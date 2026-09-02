@@ -137,8 +137,10 @@ coverage-versus-intensity mechanism can be estimated at all.
 
 # DECISION 2 — Denominator: per capita or per enrollee?
 
-**Recommendation: per capita is the outcome. Per enrollee appears only as one
-term of the decomposition, never as a standalone finding.**
+**Recommendation: per capita is the headline outcome, because it answers the
+question the poster asks. Per enrollee is reported alongside it as the
+compositional margin — it says who moved — and is interpreted against the
+"movers looked like incumbents" benchmark, never against zero.**
 
 Script: `R/evidence_decisions.R`. Panel: `R/prep_panel.R`.
 
@@ -171,28 +173,76 @@ ATT as % of pre-period level (SE):
 | Private | Ambulatory | +2.1 (2.6) | +5.3 (3.0) |
 | Medicare | All care | +0.4 (1.4) | +1.5 (0.9) |
 
-**The private "finding" is arithmetic.** The identity is
-spend/pop = (spend/enrollee) × (enrollee/pop), so in percentage terms
-%Δ per capita ≈ %Δ per enrollee + %Δ coverage. Private coverage fell 3.41% of
-its own level. Per capita moved +1.7%. That implies +5.11% per enrollee **with
-no change in spending at all** — against +4.8% observed. Essentially the whole
-per-enrollee "effect" is the denominator shrinking.
+**The three quantities are algebraically linked, but not interchangeable.**
+spend/pop = (spend/enrollee) x (enrollee/pop), so any two determine the third.
+They are therefore not three independent findings. But *which* two you report
+decides which question you answer: per capita answers "did the fiscal burden
+move between payers?", per enrollee answers "who moved?".
 
-The scrapped poster reported that as evidence of compositional change. It is
-compositional change, but it is not evidence of anything beyond the coverage
-effect already reported, and presenting it as a second finding double-counts.
+**The per-enrollee margin is informative, and the right benchmark is not zero.**
+An earlier draft of this memo called the private per-enrollee result "arithmetic"
+and treated it as double-counting. That was the wrong null. The correct null is
+that the movers looked like the people who stayed:
 
-**The same arithmetic run the other way is the actual result.** Medicaid
-coverage rose 19.8% of its own level while Medicaid spending per capita rose
-18.0%, leaving per-enrollee spending at −3.3% (SE 4.3) — indistinguishable from
-zero. Expansion bought coverage, not intensity. That is a mechanism, cleanly
-identified, and it is only available because Decision 1 went to all-ages.
+- If leavers are **average cost**, losing 3.41% of private enrollees cuts total
+  private spending by 3.41% and leaves spending per enrollee **unchanged**.
+- If leavers are **cheaper than average**, spending per enrollee **rises**.
+
+So the per-enrollee estimate is a direct test of selection on the exit margin,
+and it does not merely restate the coverage effect.
+
+## E2.3 — Bounding the compositional story
+
+Write r for the mean spending of the movers as a fraction of the incumbent mean.
+For an exit, m'/m = (1 - s·r)/(1 - s); for an entry, m'/m = (1 + s·r)/(1 + s).
+
+**Private — who left.** Enrollment fell 3.41% of its level.
+
+| Quantity | Value |
+|---|---|
+| Spending per enrollee | **+4.8%** (SE 2.8), 95% CI [−0.7, +10.3] |
+| If leavers were average cost (r = 1) | 0% |
+| If leavers cost *nothing* (r = 0) | **+3.53%** — the most selection can give |
+
+Two tests of "the leavers were average cost". On the per-enrollee margin,
+t = 1.71, **p = 0.088**. On the per-capita margin — total private spending
+should have fallen 3.41% and instead came in at +1.7% — t = 1.98, **p = 0.048**.
+
+So the compositional reading has support: the people who left private coverage
+took very little spending with them. **But it is at the edge of what selection
+alone can explain.** The point estimate of +4.8% exceeds the +3.53% that
+costless leavers would produce, implying r = −0.36, which is not a possible
+value. The CI on r is [−1.91, +1.20], so this is noise rather than a
+contradiction — but it means the honest claim is directional: *the leavers were
+much cheaper than the average private enrollee*, not a specific figure.
+
+**Medicaid — who joined. This is the cleaner version of the same idea.**
+Enrollment rose 19.9% of its level and spending per enrollee moved −3.3%
+(SE 4.3). Solving for r:
+
+> **New Medicaid enrollees cost about 80% of an incumbent enrollee** (95% CI
+> 0.29 to 1.31).
+
+Costless entrants would have driven per-enrollee spending down 16.6%; average-
+cost entrants would have left it flat. The data sit near the top of that range.
+The expansion population was somewhat cheaper than the existing Medicaid
+caseload, and not dramatically so.
+
+→ `evidence/E2-3_who_moved.pdf`, `R/evidence_selection.R`
 
 → `evidence/E2-2_per_capita_vs_per_enrollee.pdf`
 
 ---
 
-# DECISION 3 — Multiplicity
+# DECISION 3 — Multiple comparisons
+
+**The decision.** The design fits 24 spending-per-capita models (4 payers x 6
+settings). At a 5% threshold, about **1.2 of them would look significant even if
+every true effect were exactly zero**. So when four come back significant, the
+question is whether that is signal or simply the expected yield of a wide net.
+The choice is between adjusting the p-values, pre-designating a small primary
+set and labelling the rest exploratory, or reporting raw p-values with the
+search fully described.
 
 **Recommendation: no adjustment is needed, and saying so is stronger than
 adjusting.** Report BH q-values on the primary set anyway; they cost nothing.
@@ -298,5 +348,6 @@ Stated once, plainly, so Checkpoint 3 has something to react to:
 > by 2.2 points. Medicaid spending per capita rose 18%. Spending *per enrollee*
 > did not move (−3.3%, SE 4.3), so the additional spending is people, not
 > intensity. Medicare spending did not move on any margin. Private spending per
-> capita did not move, and its apparent per-enrollee rise is the coverage effect
-> re-expressed. Out-of-pocket spending is not identified in this design.
+> capita did not move; its per-enrollee rise says the people who dropped private
+> coverage were much cheaper than those who kept it. New Medicaid enrollees cost
+> about 80% of an incumbent enrollee. Out-of-pocket spending is not identified.
