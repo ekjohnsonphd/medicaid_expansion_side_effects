@@ -95,9 +95,6 @@ states. Private insurance increased with the Marketplace in both settings, to a 
 Enrollment rose **19.9%** and spending per resident rose **18.0%** (SE 3.9). Spending per
 enrollee did not follow: **−3.3%** (SE 4.4).
 
-Against a pre-expansion **$5,649** per enrollee, the marginal enrollee cost roughly
-**$4,500** per year.
-
 ### 3. Weak evidence of increased private spending
 
 ![](figures/f3_private.png)
