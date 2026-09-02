@@ -2,7 +2,7 @@
 title: "Who Pays After Medicaid Expansion?"
 subtitle: "Coverage, spending and utilisation across payers in US states, 2010--2018"
 author:
-  - name: Emily Johnson
+  - name: Emily K. Johnson
 venue: "Wennberg International Collaborative · September 2026"
 takeaway: "Expansion's new enrollees cost about as much as the old ones, and private insurance did not shrink to pay for them."
 takeaway-sub: "Medicaid spending per resident rose 18%; per enrollee it did not move. Private coverage grew in expansion states too --- just more slowly than where the marketplace did the covering."
@@ -70,30 +70,25 @@ age structure. Standard errors clustered by state, multiplier bootstrap.
 | Private   | −2.16 | [−3.07, −1.24] | 0.96 |
 
 Medicaid rose **3.7 points**. The uninsured rate fell **1.4 points** further than in control
-states. This is the first stage, and it is the part nobody disputes. The rest of the poster
-asks what the money did.
+states. Private insurance increased with the Marketplace in both settings, to a greater extent in non-expansion states.
 
 ```{=typst}
 #colbreak()
 ```
 
-### 2. The new enrollees were not free riders
+### 2. New enrollees had similar healthcare consumption
 
 ![](figures/f2_medicaid.png)
 
 ```{=typst}
-#note[Teal: expansion states. Amber: never-expanded states. Medicaid spending per resident is spending per enrollee times enrollees per resident --- two margins are estimated, so the third is implied.]
+#note[Teal: expansion states. Amber: never-expanded states.]
 ```
 
 Enrollment rose **19.9%** and spending per resident rose **18.0%** (SE 3.9). Spending per
 enrollee did not follow: **−3.3%** (SE 4.4).
 
-Had the people expansion enrolled cost nothing to cover, spending per enrollee would have
-fallen **16.6%**. It did not. That is rejected at **p = 0.002**. Equal cost with the existing
-caseload is *not* rejected (p = 0.46).
-
 Against a pre-expansion **$5,649** per enrollee, the marginal enrollee cost roughly
-**$4,500** --- about 80% of an incumbent, and not distinguishable from 100%.
+**$4,500** per year.
 
 ### 3. Private insurance did not shrink to pay for it
 
