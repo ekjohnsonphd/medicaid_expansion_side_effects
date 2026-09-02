@@ -1,0 +1,5 @@
+If you have an abstract has been accepted for poster presentation, the display board size will be A0 (841 wide x 1189 mm or 33.1 wide x 46.8 in), that is, Portrait shape.  Please set up your poster at Diologen beginning at 11:00 Wednesday 9 September so that it can be viewed throughout the conference. We will provide fasteners.
+We are pleased to have received a large number of excellent abstracts this year assigned to the poster session.  In order to have sufficient time for each author to briefly present at the beginning of the session, the posters will be in 2 groups of about 18 each (see the assignments in the agenda or abstract book).  Each first author will have one minute to present the title, research question, and major finding. Then we will have about 30-40 minutes for browsing and discussion.  (One-minute presentations can be highly effective but require preparation and practice.  Please do so, because the assigned group conference coordinator will indicate to you when your minute is over.)
+
+Poster should be SDU branded, both with colors/fonts and with the SDU and DaCHE logos. Panels will be decided when I see the figures and tables we're including.
+
