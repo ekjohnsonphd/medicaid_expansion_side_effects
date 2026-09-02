@@ -92,3 +92,6 @@ slides/figures_survey/
 # Poster figures are regenerable; the poster PDF is tracked
 poster/figures/
 !poster/poster.pdf
+
+# Worktree-local symlink to the gitignored DEX source in the main checkout
+data/dex

@@ -49,80 +49,96 @@ Emily presents this alone and takes questions. So:
 **[DECISION 0]** Confirm the delete list. Anything on it you want kept?
 CONFIRMED. NO NEED FOR MY VERIFICATION.
 
-## Stage 1 — Audit and design memo → **CHECKPOINT 2**  *(~60 min mine, ~20 min yours)*
+## Stage 1 — Audit and evidence run → **CHECKPOINT 2**  *(~2h mine, ~30m yours)*
 
-I read every surviving analysis file and write `notes/audit.md` containing:
+**Revised on Emily's note:** a description of each choice is insufficient. Every
+decision below ships with named evidence, visual where a figure beats a
+sentence. For the age basis this means **estimating on both bases before the
+decision**, not after, and handing over the comparison.
 
-**(a) Confirmed errors** — with evidence, not assertion. Already known:
+Output: `notes/audit.md` plus a figure pack in `notes/evidence/`.
 
-| # | Issue | Status |
+### (a) Confirmed errors — verified, not asserted
+
+| # | Issue | Evidence I produce |
 |---|---|---|
-| 1 | 7 states (ID, UT, NE, MO, OK, SD, NC) miscoded as 2014 expanders | fixed 31 Aug, verify |
-| 2 | `dr`/`ipw` infeasible at N=51 — perfect separation, cells return NA | confirmed, spec is `reg` |
-| 3 | Methods notes document the standardized pipeline; the scrapped poster showed the all-ages one | unresolved |
-| 4 | Every OOP spend-per-capita model fails the pre-trend test | acknowledged but under-weighted |
-| 5 | `build_covariates.R:9` hardcodes a live Census API key | unfixed |
-| 6 | Panel ends 2018; abstract says 2010–2019 | wording |
+| 1 | 7 states miscoded as 2014 expanders | cohort file re-checked against KFF implementation dates, printed table |
+| 2 | `dr`/`ipw` infeasible at N=51 | propensity-score fit shown separating; count of NA (g,t) cells by covariate count |
+| 3 | Two parallel pipelines, one documented | resolved by Decision 1 — one basis survives |
+| 4 | OOP fails the pre-trend test | see Decision 4 evidence |
+| 5 | `build_covariates.R:9` hardcoded Census API key | fixed in Stage 0 follow-up; key must be rotated by Emily |
+| 6 | Panel ends 2018 | wording fix in methods notes |
 
-**(b) Load-bearing choices needing your call.** These look like details and are not:
+### (b) Decisions, each with its evidence
 
-- **[DECISION 1] Age basis.** Standardized removes demographic composition from
-  the rates, which is the defensible choice for a spending comparison. But under
-  standardization the implied population is not a population, so you cannot
-  recover enrollee or population denominators — which kills both the coverage
-  first stage and the three-way decomposition. All-ages keeps them and gives up
-  the adjustment. *You cannot have both.* My read: this choice determines
-  whether the poster can tell a mechanism story at all. 
-- **[DECISION 2] Denominator.** Spend **per capita** has a fixed denominator and
-  is the policy-relevant quantity. Spend **per beneficiary** has an
-  *endogenous* denominator — expansion changes who is enrolled, so a
-  per-enrollee effect confounds price/intensity with composition. The scrapped
-  poster's "private per enrollee rises" claim is exactly this problem. I
-  recommend per capita as primary, per beneficiary only as an explicitly
-  labelled compositional diagnostic.
-- **[DECISION 3] Multiplicity.** We will estimate on the order of 40–100
-  models. Options: pre-register a small primary set and label the rest
-  exploratory; report q-values; or report nothing beyond the primary set.
-- **[DECISION 4] What to do about OOP** given the pre-trend failure. Drop it,
-  report it as not identified, or keep it with the failure stated on the poster.
-- **[DECISION 5] Clustering and inference.** Currently clustered by state with
-  wild-bootstrap not used. With 19 control states, cluster-robust SEs are on the
-  edge of where bootstrap is usually recommended.
+**[DECISION 1] Age basis — standardized vs all ages.** Emily leans all-ages;
+this is the evidence that would justify or block it.
 
-**(c) Proposed expansions** — I will argue for or against each, you choose:
-honest-DiD / Rambachan–Roth sensitivity for the pre-trend concern; a
-never-treated-only control definition stated explicitly; the 1115-waiver
-exclusion; and whether the staggered sample returns as a robustness panel.
+- **E1.1 Denominator coherence.** Implied population = `spend / spend_per_capita`,
+  computed separately within each payer. It is the same state population, so
+  under all-ages the four payers must agree. Under standardization they need not.
+  Figure: cross-payer spread by basis. *This is the affirmative case for all-ages
+  and it is a fact about the data, not a preference.*
+- **E1.2 The counter-argument, tested.** All-ages rates are confounded by
+  demographic composition only if treated and control states' age structures
+  **diverged** over 2010–2018. Figure: `prop_under18` and `prop_over65` trends by
+  group. If the lines are parallel, standardization is cosmetic here and the
+  objection dissolves. If they fan out, it is real.
+- **E1.3 How much standardization moves the data.** Overlay of standardized vs
+  all-ages spend per capita, by payer, treated vs control.
+- **E1.4 Does it change the answer?** Primary spec estimated on both bases;
+  scatter of ATT (as % of pre-period level) with the 45-degree line.
+- **E1.5 Pre-trend pass rates by basis.** Table.
 
-**You review the memo and answer DECISIONS 1–5.** This is the gate.
-EJ: I WILL NEED A LIST OF PIECES OF EVIDENCE FOR EACH DECISION THAT YOU CAN PROVIDE. A DESCRIPTION OF THE CHOICE IS INSUFFICIENT. I WOULD PREFER TO BE ABLE TO SEE PREVIOUS RESULTS VISUALLY.
+**[DECISION 2] Denominator — per capita vs per beneficiary.**
 
-## Stage 2 — Re-estimate  *(~90 min including runtime)*
+- **E2.1 Is the denominator actually endogenous?** Event-study plot of enrollee
+  counts by payer. If Medicaid and private enrollment move at expansion, per-
+  beneficiary outcomes mix intensity with composition — shown, not argued.
+- **E2.2 The two ATTs side by side** for every payer and setting, with the
+  coverage effect alongside, so the identity is visible.
 
-One script, `R/estimate.R`, written to the decisions from Checkpoint 2. Scope
-proposal (edit freely):
+**[DECISION 3] Multiplicity.**
 
-- **Primary:** 4 payers × {Total + 5 settings}, spend per capita, 2014 cohort vs
-  19 never-expanders, `reg` with the agreed covariates. ~24 models.
-- **First stage:** coverage share by payer (only if DECISION 1 permits).
-- **Sensitivity, named in advance:** `dr` on the reduced covariate set;
-  waiver-restricted states excluded; full staggered sample.
-- Writes **one** tidy CSV plus an event-study CSV. No 1332-model matrix.
+- **E3.1 p-value histogram** across the full estimated set against the uniform
+  null, plus the count significant at 0.05 versus the count expected by chance.
+- **E3.2 BH q-values** on the primary set.
 
-Output to you: the numbers, in a table, with a paragraph on what changed
-relative to the pre-correction results and why.
+**[DECISION 4] Out-of-pocket, given the pre-trend failure.**
+
+- **E4.1 Raw OOP trends 2010–2013**, treated vs control. Diagnosis, not just the
+  test: level shift, trend, or one bad year?
+- **E4.2 Pre-trend p by payer, setting and basis** — does OOP fail on both?
+- **E4.3 Event-study plot** with pre-periods shown.
+
+**[DECISION 5] Inference.**
+
+- **E5.1 Analytic clustered SE vs multiplier bootstrap** (`bstrap = TRUE`),
+  pointwise vs uniform bands, on the primary set. Table flagging any conclusion
+  that flips.
+
+### (c) Proposed expansions — argued for or against, Emily chooses
+
+Rambachan–Roth sensitivity for the pre-trend concern; never-treated-only control
+group stated explicitly; the 1115-waiver exclusion; staggered sample as a
+robustness panel.
+
+**Gate: Emily reviews the evidence pack and answers Decisions 1–5.**
+
+## Stage 2 — Final estimation  *(~45 min)*
+
+Smaller than originally planned, because Stage 1 already fits most of it. One
+script, `R/estimate.R`, run to the chosen decisions, writing one tidy overall CSV
+and one event-study CSV. Anything Stage 1 fit under a rejected branch is dropped,
+not carried forward.
 
 ## Stage 3 — Results review → **CHECKPOINT 3**  *(~30 min yours)*
 
 You see the estimates and decide:
 
-- **[DECISION 6]** The poster's central claim — the null-with-bounds framing,
-  the decomposition/mechanism framing, or an explicit reconciliation with the
-  submitted abstract.
-- **[DECISION 7]** How to handle the abstract conflict. Your submitted abstract
-  promises OOP falls and private per-enrollee rises. The corrected analysis may
-  not support either. Someone in the room may have read it. THIS DOESN'T MATTER. IT IS TO BE EXPECTED THAT ANALYSIS CHANGES OVER TIME SINCE AN ABSTRACT SUBMISSION. REMOVE.
-- **[DECISION 8]** You give me the poster template: layout, panel count,
+- **[DECISION 6]** The poster's central claim — null-with-bounds, or the
+  decomposition/mechanism framing. Chosen with the estimates in front of you.
+- **[DECISION 7]** You give me the poster template: layout, panel count,
   house/institutional style, fonts, colours, size, and any WIC formatting rules.
 
 ## Stage 4 — Figures and tables → **CHECKPOINT 4**  *(~90 min)*
@@ -147,20 +163,20 @@ and look notes. Then:
 | | Stage | Mine | Yours |
 |---|---|---|---|
 | | 0 Reset | 20m | 5m |
-| **CP2** | 1 Audit + design memo | 60m | 20m |
-| | 2 Re-estimate | 90m | — |
+| **CP2** | 1 Audit + evidence run | 120m | 30m |
+| | 2 Final estimation | 45m | — |
 | **CP3** | 3 Results review + template | 15m | 30m |
 | **CP4** | 4 Figures and tables | 90m | 20m |
 | **CP5** | 5 Poster build + defence sheet | 90m | 30m |
-| | **Total** | **~6h** | **~1h50m** |
+| | **Total** | **~6h15m** | **~2h** |
 
 Slack is thin. If we fall behind, the first thing cut is the sensitivity suite
 in Stage 2, not a checkpoint.
 
 ## Risks
 
-1. **The corrected result may be a null**, and a null poster is harder to
-   present than the abstract implied. Decided at Checkpoint 3, not assumed here.
+1. **The corrected result may be a null**, and a null is harder to present
+   than an effect. Framing decided at Checkpoint 3, not assumed here.
 2. **DECISION 1 is a genuine trade-off with no free option.** If it goes to
    standardized, the mechanism story is unavailable and the poster is thinner.
 3. **One day.** If Stage 1 uncovers an error deeper than the six listed, we
