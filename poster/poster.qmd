@@ -81,7 +81,7 @@ states. Private insurance increased with the Marketplace in both settings, to a 
 ![](figures/f2_medicaid.png)
 
 ```{=typst}
-#note[Teal: expansion states. Amber: never-expanded states.]
+#note[Difference-in-differences effect at each year relative to 2014, as a percentage of the pre-expansion level in expansion states. Points left of the dashed line are the parallel-trends pre-test made visible. 95% intervals.]
 ```
 
 Enrollment rose **19.9%** and spending per resident rose **18.0%** (SE 3.9). Spending per
@@ -98,12 +98,17 @@ Against a pre-expansion **$5,649** per enrollee, the marginal enrollee cost roug
 controls. The −2.2 point estimate is control states gaining faster, not expansion states
 losing. Marketplace subsidies cover 100--138% FPL where Medicaid does not.
 
-Private spending per enrollee **+4.8%** (SE 2.8) and encounters per enrollee **+3.3%**
-(SE 2.4). Neither reaches significance alone.
+Private spending per enrollee **+4.8%** (SE 2.8) and per resident **+1.7%** (SE 2.4).
+Neither reaches significance. Spending did not fall on either margin.
 
-Because both margins move together, this is **use, not price**. The most likely reading is
-dilution of the *control* group's risk pool as lower-utilising marketplace enrollees joined
-it.
+Encounters per enrollee are positive in all five settings (**+2.2 to +5.6%**) and
+significant in none, so what movement there is looks like **use rather than price**. The
+most likely reading is dilution of the *control* group's risk pool as lower-utilising
+marketplace enrollees joined it.
+
+```{=typst}
+#note[Axes as in panel 2. Encounters are not summed across settings: a prescription fill and a hospital stay are not the same unit.]
+```
 
 ```{=typst}
 #colbreak()

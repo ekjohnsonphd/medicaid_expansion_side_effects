@@ -1,9 +1,11 @@
 # ==============================================================================
 # Poster assets, in two styles.
 #
-#   banded : treated actual vs event-study counterfactual with a 95% band
 #   lines  : treated and control group means -- the plot a health economist
 #            expects to see
+#   banded : treated actual vs event-study counterfactual with a 95% band
+#   event  : the event study itself -- ATT by year relative to 2014, with the
+#            pre-period coefficients visible as the parallel-trends test
 #
 # Out-of-pocket is excluded throughout: DEX defines it as insured cost-sharing
 # plus all spending by the uninsured, and expansion moves that mix.
@@ -41,7 +43,7 @@ sv <- function(g, f, w = 245, h = 150)
 # Copy one idiom's figures to the canonical names the .qmd references, so the
 # poster text lives in a single file and switching style is one command:
 #   Rscript -e 'source("R/poster_assets.R"); use_style("lines")'
-use_style <- function(style = c("lines", "band")) {
+use_style <- function(style = c("lines", "band", "event")) {
   style <- match.arg(style)
   for (n in c("f2_medicaid", "f3_private", "f4_payers"))
     file.copy(file.path(FIG, sprintf("%s_%s.png", n, style)),
@@ -55,9 +57,16 @@ means <- function(py, out, tc = "Total") {
   p[payer == py & toc == tc & is.finite(get(out)),
     .(v = mean(get(out))), by = .(year_id, grp)]
 }
+# One fit per (payer, outcome, setting); band() and esd() both draw on it.
+FITS <- new.env(parent = emptyenv())
+fit1 <- function(py, out, tc = "Total") {
+  k <- paste(py, out, tc)
+  if (is.null(FITS[[k]])) assign(k, cs_fit(p[payer == py & toc == tc], out), FITS)
+  get(k, FITS)
+}
 band <- function(py, out, tc = "Total") {
   d <- p[payer == py & toc == tc]
-  f <- cs_fit(d, out)
+  f <- fit1(py, out, tc)
   act <- d[expansion_year == 2014, .(actual = mean(get(out))), by = year_id]
   es <- copy(f$es)[, year_id := event_time + 2014]
   m <- merge(act, es, by = "year_id", all.x = TRUE)
@@ -66,7 +75,16 @@ band <- function(py, out, tc = "Total") {
            hi = actual - att + 1.96 * se)][]
 }
 
-# ---------- the two idioms ----------------------------------------------------
+# Event study on the poster's own scale: the ATT at each event time divided by
+# the pre-2014 mean in the treated states, so panels with different units are
+# readable side by side.
+esd <- function(py, out, tc = "Total") {
+  f <- fit1(py, out, tc); b <- f$overall$base
+  f$es[, .(t = event_time, pct = 100 * att / b,
+           lo = 100 * (att - 1.96 * se) / b, hi = 100 * (att + 1.96 * se) / b)]
+}
+
+# ---------- the three idioms --------------------------------------------------
 gline <- function(d, ylab) {
   ggplot(d, aes(year_id, v, colour = grp)) +
     geom_vline(xintercept = 2013.5, linetype = 2, colour = "grey55", linewidth = .8) +
@@ -86,6 +104,17 @@ gband <- function(d, ylab) {
     YRS + labs(y = ylab) + th()
 }
 
+gevent <- function(d, ylab = "Effect, % of pre-2014 level") {
+  ggplot(d, aes(t)) +
+    geom_hline(yintercept = 0, colour = "grey45", linewidth = .8) +
+    geom_vline(xintercept = -0.5, linetype = 2, colour = "grey55", linewidth = .8) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = TREAT, alpha = .18) +
+    geom_line(aes(y = pct), colour = TREAT, linewidth = 1.8) +
+    geom_point(aes(y = pct), colour = TREAT, size = 3.4) +
+    scale_x_continuous("Years since expansion", breaks = c(-2, 0, 2, 4)) +
+    labs(y = ylab) + th() + theme(legend.position = "none")
+}
+
 # ============================ F1  coverage ====================================
 lv <- unique(p[toc == "Total", .(location_name, year_id, payer, grp, coverage, uninsured_rate)])
 cv <- lv[!is.na(coverage), .(v = mean(coverage)), by = .(year_id, grp, s = payer)]
@@ -102,34 +131,61 @@ md_l <- rbind(cbind(means("mdcd", "spend_per_capita"), m = "Per resident"),
               cbind(means("mdcd", "spend_per_bene"),   m = "Per enrollee"))
 md_b <- rbind(cbind(band("mdcd", "spend_per_capita"), m = "Per resident"),
               cbind(band("mdcd", "spend_per_bene"),   m = "Per enrollee"))
-for (d in list(md_l, md_b)) d[, mf := factor(m, levels = c("Per resident", "Per enrollee"))]
+md_e <- rbind(cbind(esd("mdcd", "spend_per_capita"), m = "Per resident"),
+              cbind(esd("mdcd", "spend_per_bene"),   m = "Per enrollee"))
+for (d in list(md_l, md_b, md_e)) d[, mf := factor(m, levels = c("Per resident", "Per enrollee"))]
 sv(gline(md_l, "Dollars per year") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f2_medicaid_lines.pdf", 245, 165)
 sv(gband(md_b, "Dollars per year") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f2_medicaid_band.pdf", 245, 165)
+sv(gevent(md_e) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+   "f2_medicaid_event.pdf", 245, 165)
 
 # ============================ F3  private =====================================
-pv_l <- rbind(cbind(means("priv", "spend_per_bene"), m = "Spending per enrollee ($)"),
-              cbind(means("priv", "vol_per_bene"),   m = "Encounters per enrollee"))
-pv_b <- rbind(cbind(band("priv", "spend_per_bene"), m = "Spending per enrollee ($)"),
-              cbind(band("priv", "vol_per_bene"),   m = "Encounters per enrollee"))
-for (d in list(pv_l, pv_b)) d[, mf := factor(m, levels = c("Spending per enrollee ($)",
-                                                           "Encounters per enrollee"))]
-sv(gline(pv_l, NULL) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+# NOT encounters per enrollee: at toc == "Total" that sums prescription fills
+# with hospital stays, and the sum is dominated by fills. The two spending
+# margins are the pair the panel actually argues about -- per enrollee for
+# whether the risk pool changed, per resident for whether the sector shrank.
+PVM <- c("Per enrollee", "Per resident")
+pv_l <- rbind(cbind(means("priv", "spend_per_bene"),   m = PVM[1]),
+              cbind(means("priv", "spend_per_capita"), m = PVM[2]))
+pv_b <- rbind(cbind(band("priv", "spend_per_bene"),   m = PVM[1]),
+              cbind(band("priv", "spend_per_capita"), m = PVM[2]))
+pv_e <- rbind(cbind(esd("priv", "spend_per_bene"),   m = PVM[1]),
+              cbind(esd("priv", "spend_per_capita"), m = PVM[2]))
+for (d in list(pv_l, pv_b, pv_e)) d[, mf := factor(m, levels = PVM)]
+sv(gline(pv_l, "Dollars per year") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f3_private_lines.pdf", 245, 165)
-sv(gband(pv_b, NULL) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+sv(gband(pv_b, "Dollars per year") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f3_private_band.pdf", 245, 165)
+sv(gevent(pv_e) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+   "f3_private_event.pdf", 245, 165)
+
+# Alternative F3, for comparison only: spending per enrollee beside AMBULATORY
+# encounters per enrollee -- a real unit, unlike the cross-setting total. Not
+# used, because that model fails the parallel-trends pre-test (p = 0.010).
+# To adopt it:  file.copy(file.path(FIG, "f3_private_event_vol.png"),
+#                         file.path(FIG, "f3_private.png"), overwrite = TRUE)
+pv_v <- rbind(cbind(esd("priv", "spend_per_bene"),          m = "Spending per enrollee"),
+              cbind(esd("priv", "vol_per_bene", "AM"), m = "Ambulatory encounters"))
+pv_v[, mf := factor(m, levels = c("Spending per enrollee", "Ambulatory encounters"))]
+sv(gevent(pv_v) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+   "f3_private_event_vol.pdf", 245, 165)
 
 # ============================ F4  three payers ================================
 al_l <- rbindlist(lapply(names(PAY3), function(x)
   cbind(means(x, "spend_per_capita"), m = PAY3[[x]])))
 al_b <- rbindlist(lapply(names(PAY3), function(x)
   cbind(band(x, "spend_per_capita"), m = PAY3[[x]])))
-for (d in list(al_l, al_b)) d[, mf := factor(m, levels = PAY3)]
+al_e <- rbindlist(lapply(names(PAY3), function(x)
+  cbind(esd(x, "spend_per_capita"), m = PAY3[[x]])))
+for (d in list(al_l, al_b, al_e)) d[, mf := factor(m, levels = PAY3)]
 sv(gline(al_l, "Dollars per resident") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f4_payers_lines.pdf", 245, 165)
 sv(gband(al_b, "Dollars per resident") + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
    "f4_payers_band.pdf", 245, 165)
+sv(gevent(al_e) + facet_wrap(~ mf, nrow = 1, scales = "free_y"),
+   "f4_payers_event.pdf", 245, 165)
 
 # ============================ TABLES ==========================================
 # Written as markdown so the numbers can be pasted into poster.qmd, which is
