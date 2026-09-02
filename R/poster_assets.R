@@ -33,8 +33,24 @@ th <- function(...) theme_emily(base_size = BASE, ...) +
 # years runs the labels together.
 YRS <- scale_x_continuous(NULL, breaks = c(2010, 2014, 2018))
 
-sv <- function(g, f, w = 245, h = 150) ggsave(file.path(FIG, f), g, width = w,
-                                             height = h, units = "mm", dpi = 300)
+# PDF for the LaTeX poster; PNG for the Quarto/Typst one (Typst cannot embed PDF).
+sv <- function(g, f, w = 245, h = 150) {
+  ggsave(file.path(FIG, f), g, width = w, height = h, units = "mm", dpi = 300)
+  ggsave(file.path(FIG, sub("\\.pdf$", ".png", f)), g, width = w, height = h,
+         units = "mm", dpi = 300, device = ragg::agg_png)
+}
+
+# Copy one idiom's figures to the canonical names the .qmd references, so the
+# poster text lives in a single file and switching style is one command:
+#   Rscript -e 'source("R/poster_assets.R"); use_style("lines")'
+use_style <- function(style = c("lines", "band")) {
+  style <- match.arg(style)
+  for (n in c("f2_medicaid", "f3_private", "f4_payers"))
+    file.copy(file.path(FIG, sprintf("%s_%s.png", n, style)),
+              file.path(FIG, sprintf("%s.png", n)), overwrite = TRUE)
+  writeLines(style, file.path(FIG, "STYLE"))
+  message("poster figures set to: ", style)
+}
 
 # ---------- data helpers ------------------------------------------------------
 means <- function(py, out, tc = "Total") {

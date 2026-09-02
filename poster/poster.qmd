@@ -1,0 +1,172 @@
+---
+title: "Who Pays After Medicaid Expansion?"
+subtitle: "Coverage, spending and utilisation across payers in US states, 2010--2018"
+author:
+  - name: Emily Johnson
+venue: "Wennberg International Collaborative · September 2026"
+takeaway: "Expansion moved people onto Medicaid and money followed them, one enrollee at a time."
+takeaway-sub: "Spending per enrollee did not move, Medicare did not move, and private insurance grew in expansion states too --- just more slowly than where the marketplace did the covering."
+format:
+  typst:
+    template-partials:
+      - typst-template.typ
+      - typst-show.typ
+    keep-typ: false
+---
+
+<!-- ===========================================================
+     Everything below is editable text. Panels are `##` headings;
+     `###` marks the highlighted panel. Bold text renders in blue.
+     `#colbreak()` blocks move content between columns.
+
+     Figures come from R/poster_assets.R. To switch figure idiom, run one of
+     these from the repository root and re-render:
+       Rscript -e 'source("R/poster_assets.R"); use_style("band")'
+       Rscript -e 'source("R/poster_assets.R"); use_style("lines")'
+     The figure captions differ between the two -- see the note under
+     panel 2.
+
+     Render with:  quarto render poster/poster.qmd
+     =========================================================== -->
+
+## The question
+
+Medicaid expansion raised Medicaid enrollment and Medicaid spending. What it did to
+*everyone else* is less settled --- whether the new coverage displaced private insurance,
+and whether the new spending displaced anyone else's.
+
+We follow coverage, spending and utilisation for every major payer through the same
+design, so the answers have to add up.
+
+## Data and design
+
+IHME Disease Expenditure Project (DEX 2.0): state-level spending and encounters by payer
+and setting, 2010--2018. Uninsurance from CPS.
+
+Difference-in-differences comparing the **25 states that expanded on 1 January 2014** with
+the **19 that never expanded**. Callaway and Sant'Anna (2021) group-time estimator,
+never-treated controls, adjusting for poverty, median income, pre-expansion uninsurance and
+age structure. Standard errors clustered by state, multiplier bootstrap.
+
+Enrollee counts and population are recovered from the reported ratios, so coverage is
+measured inside the same source as spending. On the all-ages basis all four payers return
+the same population to within **0.005%**.
+
+```{=typst}
+#note[Later cohorts are excluded: they contain 3, 3 and 1 states, and at that size a placebo test rejects for a one-state cohort 88% of the time.]
+```
+
+## Spending has three parts
+
+```{=typst}
+#align(center)[$ "spend" / "resident" = "spend" / "encounter" times "encounters" / "enrollee" times "enrollees" / "resident" $]
+```
+
+Price, use, and coverage. An identity, so each margin is estimated separately and read
+against the others.
+
+## Limitations
+
+Estimates describe 2014 expanders only.
+
+**Out-of-pocket spending is not analysed.** DEX defines it as insured cost-sharing plus all
+spending by the uninsured, and expansion changes that mix directly. Its pre-trend test
+fails in every setting.
+
+Private coverage changes cannot be attributed to individual switching: this design
+identifies group differences, not flows.
+
+```{=typst}
+#colbreak()
+```
+
+## 1. Expansion covered the uninsured
+
+![](figures/f1_coverage.png)
+
+```{=typst}
+#note[Blue: the 25 states that expanded in 2014. Red: the 19 that never expanded.]
+```
+
+| Coverage | Effect | 95% CI | Pre-test |
+|:---------|-------:|:-------|---------:|
+| Medicaid  | +3.69 | [+2.16, +5.23] | 0.84 |
+| Medicare  | −0.20 | [−0.54, +0.14] | 0.72 |
+| Uninsured | −1.38 | [−2.47, −0.30] | 0.30 |
+| Private   | −2.16 | [−3.04, −1.27] | 0.96 |
+
+Medicaid rose **3.7 points**. The uninsured rate fell **1.4 points** further than in control
+states.
+
+**Private coverage rose in both groups** --- 62.9 to 64.4% in expanders, 62.6 to 66.5% in
+controls. The negative estimate is control states gaining faster, not expansion states
+losing. Marketplace subsidies cover 100--138% FPL where Medicaid does not.
+
+### 2. Spending followed enrollment, not intensity
+
+![](figures/f2_medicaid.png)
+
+```{=typst}
+#note[Blue: expansion states' actual path. Grey dashed with shading: the estimated counterfactual with a 95% band. Before 2014 the band is the parallel-trends test. (Delete this note when using the `lines` style --- the legend covers it.)]
+```
+
+Medicaid spending per resident rose **18.0%** (SE 4.0). Per enrollee it did not move:
+**−3.3%** (SE 4.2).
+
+Solving the identity, a new enrollee costs about **80%** of an incumbent (95% CI 0.29 to
+1.31). The expansion population was slightly cheaper than the existing caseload, not
+dramatically so.
+
+```{=typst}
+#colbreak()
+```
+
+## 3. Weak signs of a changed private pool
+
+![](figures/f3_private.png)
+
+Private spending per enrollee **+4.8%** (SE 2.8) and encounters per enrollee **+3.3%**
+(SE 2.4). Neither reaches significance.
+
+Because both margins move together, this is **use, not price**. The most likely reading is
+dilution of the *control* group's risk pool as lower-utilising marketplace enrollees joined
+it.
+
+## 4. No spillover to other payers
+
+![](figures/f4_payers.png)
+
+Medicare spending per resident **+0.4%** (SE 1.3) --- nothing, on any margin. Private
+spending per resident **+1.7%** (SE 2.5).
+
+Across **84 estimates** covering four payers, five settings and four margins, every result
+significant at 5% is a Medicaid result. Among the 18 non-Medicaid spending models, **none**
+is significant --- chance alone would give about one.
+
+## Every spending estimate
+
+**Spending per resident**
+
+| Setting | Medicaid | Medicare | Private |
+|:--------|---------:|---------:|--------:|
+| All care    | +18.0 (4.0) * |  +0.4 (1.3) | +1.7 (2.5) |
+| Ambulatory  | +23.6 (6.4) * |  −0.9 (1.1) | +2.1 (2.5) |
+| Emergency   | +21.7 (8.3) * |  +2.9 (4.8) | −0.2 (1.8) |
+| Inpatient   | +22.5 (4.7) * |  +0.5 (1.3) | +1.2 (3.3) |
+| Nursing     |  +2.0 (6.7)   |  +3.0 (5.6) | +4.6 (6.8) |
+| Pharmacy    | +11.1 (12.4)  |  +0.8 (3.1) | +0.8 (5.0) |
+
+**Spending per enrollee**
+
+| Setting | Medicaid | Medicare | Private |
+|:--------|---------:|---------:|--------:|
+| All care    |  −3.3 (4.2)  | +1.5 (0.9)   | +4.8 (3.0) |
+| Ambulatory  |  +0.0 (6.1)  | +0.9 (0.9)   | +5.3 (3.1) |
+| Emergency   |  −2.0 (7.6)  | +3.8 (3.0)   | +3.2 (2.2) |
+| Inpatient   |  +4.4 (5.1)  | +0.8 (1.0)   | +4.0 (3.7) |
+| Nursing     | −14.4 (9.4)  | +4.1 (4.8)   | +7.3 (7.2) |
+| Pharmacy    | −22.5 (17.7) | +3.2 (1.4) * | +4.2 (4.4) |
+
+```{=typst}
+#note[Effect as % of the pre-2014 level (SE). \* $p < 0.05$. Every Medicaid model passes the parallel-trends pre-test; private is borderline at $p = 0.07$.]
+```

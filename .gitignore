@@ -97,3 +97,8 @@ poster/pv_*.png
 
 # Worktree-local symlink to the gitignored DEX source in the main checkout
 data/dex
+
+# Quarto poster build artefacts; poster.qmd and the partials are the source
+poster/poster.typ
+poster/*_files/
+!poster/poster.pdf
