@@ -5,8 +5,8 @@
 // the columns automatically; #colbreak() in a {=typst} block forces a break.
 
 #let navy   = rgb("#22303F")
-#let treat  = rgb("#2166AC")
-#let ctrl   = rgb("#B2182B")
+#let treat  = rgb("#00706A")
+#let ctrl   = rgb("#C77D0A")
 #let warm   = rgb("#6C757D")
 #let light  = rgb("#CCD3D9")
 #let pale   = rgb("#EDF3F8")
@@ -21,7 +21,7 @@
   set page(paper: "a0", margin: (x: 26mm, top: 24mm, bottom: 116mm),
     footer: if takeaway != none {
       block(width: 100%)[
-        #line(length: 100%, stroke: 4pt + rgb("#2166AC"))
+        #line(length: 100%, stroke: 4pt + rgb("#00706A"))
         #v(7mm)
         #align(center)[
           #text(size: 44pt, weight: "bold", fill: rgb("#22303F"))[#takeaway]

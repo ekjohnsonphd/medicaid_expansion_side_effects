@@ -17,7 +17,7 @@ FIG <- "poster/figures"; TAB <- "poster/tables"
 p <- prep_panel(verbose = FALSE)
 eff <- fread("results/toc_effects.csv")
 
-TREAT <- "#2166AC"; CTRL <- "#B2182B"; CF <- "#6C757D"
+TREAT <- "#00706A"; CTRL <- "#C77D0A"; CF <- "#6C757D"
 PAY3  <- c(mdcd = "Medicaid", mdcr = "Medicare", priv = "Private")
 BASE  <- 26   # poster type size
 
@@ -146,8 +146,13 @@ md(c("| Coverage | Effect | 95% CI | Pre-test |",
                               m, att, att - 1.96 * se, att + 1.96 * se, pre_p)]),
    "t1_coverage.md")
 
+# Multiple comparisons (Decision 3). The family is the 36 estimates the poster
+# actually reports -- 3 payers x 6 settings x 2 spending margins -- since that
+# is what a reader sees. Stars mark Benjamini-Hochberg q < 0.05, not raw p.
 e2 <- eff[payer %chin% names(PAY3) & outcome %chin% c("spend_per_capita", "spend_per_bene")]
-e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(p < .05, " *", ""))]
+e2[, q := p.adjust(p, "BH")]
+e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(q < .05, " *", ""))]
+fwrite(e2[, .(payer, toc, outcome, pct, pct_se, p, q)], "results/poster_family_bh.csv")
 for (out in c("spend_per_capita", "spend_per_bene")) {
   w <- dcast(e2[outcome == out], toc ~ payer, value.var = "cell")
   w[, ord := match(toc, names(SETTINGS))]; setorder(w, ord)
