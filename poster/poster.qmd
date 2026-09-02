@@ -30,18 +30,11 @@ and setting, all ages, 2010--2018. Uninsurance from CPS. **44 states, 396 state-
 the **25** that expanded on 1 January 2014 and the **19** that never expanded. Later
 cohorts are dropped (n ≤ 3 per year).
 
-Callaway and Sant'Anna (2021) group-time difference-in-differences. With one treated
-cohort, the estimand is the effect in year $t$ on expansion states ($D=1$):
-
-```{=typst}
-#block(width: 100%, above: 7mm, below: 7mm)[#set text(size: 26pt)
-$ "ATT"(t) = bb(E) [Y_t (1) - Y_t (0) | D = 1] $]
-```
-
-$Y_t(0)$ is unobserved after 2013. Writing $\Delta Y_t = Y_t - Y_{2013}$, it is imputed
-from the never-expanded states by regressing that change on covariates $X$ --- poverty
-rate, median household income, pre-expansion uninsurance, and the shares under 18 and
-over 65:
+Callaway and Sant'Anna (2021) group-time difference-in-differences. Writing
+$\Delta Y_t = Y_t - Y_{2013}$, the effect in year $t$ on expansion states ($D=1$) is the
+change they saw, minus the change predicted for them off the never-expanded states, given
+covariates $X$ --- poverty rate, median household income, pre-expansion uninsurance, and
+the shares under 18 and over 65:
 
 ```{=typst}
 #block(width: 100%, above: 7mm, below: 7mm)[#set text(size: 26pt)
