@@ -93,6 +93,12 @@ prep_panel <- function(verbose = TRUE) {
 # One Callaway-Sant'Anna fit; returns overall ATT, event study, and pre-test.
 cs_fit <- function(d, yname, bstrap = TRUE) {
   if (all(!is.finite(d[[yname]]))) return(NULL)
+  # The multiplier bootstrap is stochastic: without a seed, standard errors
+  # drifted by up to 0.2 percentage points between runs, which is how the
+  # poster came to carry SE 2.8 in prose and 3.0 in the table for the same
+  # estimate. Seeding per fit makes each model reproducible independently of
+  # the order it is fitted in. Point estimates were never affected.
+  set.seed(20260902L)
   m <- try(suppressWarnings(did::att_gt(
     yname = yname, tname = "year_id", idname = "id", gname = "expansion_year",
     data = d, control_group = "nevertreated", clustervars = "id",
