@@ -7,6 +7,21 @@ each is reproducible from the named script.
 
 ---
 
+# Decision log
+
+| # | Decision | Status | Resolution |
+|---|---|---|---|
+| 0 | Delete list for the reset | **closed** 2026-09-02 | Confirmed by Emily without review |
+| 1 | Age basis | **closed** 2026-09-02 | **All ages.** Standardized rates cannot recover a population (E1.1); the demographic objection does not bind (E1.2); the choice moves no estimate (E1.4) |
+| 2 | Denominator | **closed** 2026-09-02 | **Both, with distinct jobs.** Per capita answers whether the burden moved between payers; per enrollee answers who moved, judged against the "movers look like stayers" benchmark, not zero |
+| 3 | Multiple comparisons | **TABLED** at Emily's instruction | Deferred to the decision about what the poster reports. Re-open once the panel list is fixed — the guard depends on how many estimates are shown |
+| 4 | Out-of-pocket | **closed** 2026-09-02 | **Not identified, for a structural reason.** DEX defines out-of-pocket as insured cost-sharing *plus* all spending by the uninsured. Expansion cut the uninsured rate 1.38pp, so the treatment reweights the outcome's own composition. The pre-trend failure is a symptom, not the cause |
+| 5 | Inference | **closed** 2026-09-02 | **Multiplier bootstrap**, the `did` default. Analytic SEs differ by a median factor of 1.08 and change 0 of 24 verdicts |
+| 6 | Poster spine | open | Emily's four-finding arc, below, pending confirmation |
+| 7 | Poster template | open | Awaiting Emily |
+
+---
+
 # DECISION 1 — Age basis: standardized or all ages?
 
 **Recommendation: All ages.** Not as a convenience — the standardized basis
@@ -351,3 +366,50 @@ Stated once, plainly, so Checkpoint 3 has something to react to:
 > capita did not move; its per-enrollee rise says the people who dropped private
 > coverage were much cheaper than those who kept it. New Medicaid enrollees cost
 > about 80% of an incumbent enrollee. Out-of-pocket spending is not identified.
+
+
+---
+
+# Finding 1 — the coverage accounting
+
+Effect of expansion on who is covered. Payer measures are DEX-derived; the
+uninsured rate is CPS, so these are two instruments and are **not** required to
+sum to zero.
+
+| Measure | Effect (pp) | SE | Source |
+|---|---|---|---|
+| Medicaid | **+3.69** | 0.78 | DEX |
+| Private | **−2.16** | 0.45 | DEX |
+| Uninsured | **−1.38** | 0.55 | CPS |
+| Medicare | −0.20 | 0.17 | DEX |
+
+Pre-trend p for the uninsured rate is 0.300; the three payer measures pass at
+0.72–0.96.
+
+The Medicaid gain is 3.69pp. The three offsetting changes sum to 3.74pp — 58%
+from private coverage, 37% from the uninsured, 5% from Medicare. **The
+accounting closes to within 0.05pp across two independent data sources.** That
+is a strong internal consistency check, and it should be presented as that
+rather than as an exact partition: DEX payer attribution and CPS self-reported
+coverage measure different things, and people can hold more than one payer.
+
+Script: `R/evidence_uninsured.R`.
+
+---
+
+# Why out-of-pocket cannot be interpreted
+
+The DEX codebook defines the out-of-pocket payer as:
+
+> "Out-of-pocket includes spending by uninsured and spending by insured on
+> things like deductibles and copayments"
+
+So the series is a mixture of two populations, and expansion changes the mixing
+weights directly — the uninsured share fell 1.38pp. An estimate on this outcome
+combines a change in what insured households pay with a change in how many
+households are uninsured, and the design cannot separate them. The pre-trend
+failure (p = 0.00006, driven by a 1.21%/yr divergence in pre-period growth) is
+consistent with that, but the structural point stands on its own.
+
+This is also why out-of-pocket has no per-enrollee denominator in DEX: there is
+no such thing as an out-of-pocket enrollee.
