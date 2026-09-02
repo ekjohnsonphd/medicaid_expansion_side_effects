@@ -487,3 +487,97 @@ rose 3.96 pp and private rose 1.52 pp. Those two gains sum to 5.48 pp against a
 displace private insurance.
 
 Script: `R/evidence_crowdout.R` → `evidence/E6-1_coverage_levels.pdf`
+
+---
+
+# Effects by type of care
+
+84 models: 4 margins × payers × 6 settings. `R/estimate_toc.R` →
+`results/toc_effects.csv`. The four margins:
+
+| Margin | Question it answers |
+|---|---|
+| Spending per resident | did the payer's burden on the population move? |
+| Spending per enrollee | did spending per covered person move? |
+| Encounters per resident | did use by the population move? |
+| Encounters per enrollee | **did the marginal enrollee use fewer services?** |
+
+## What each payer actually spends on (pre-2014 share of that payer's total)
+
+| Payer | Ambulatory | Inpatient | Nursing | Pharmacy | ED |
+|---|---|---|---|---|---|
+| Private | **52.7%** | 24.2% | 2.8% | 17.6% | 2.7% |
+| Medicaid | 36.5% | 35.5% | 18.7% | 8.2% | 1.1% |
+| Medicare | 36.3% | 38.4% | 8.7% | 14.1% | 2.5% |
+| Out-of-pocket | 42.5% | 8.5% | 21.4% | 25.9% | 1.8% |
+
+Spending is not dominated by inpatient. For private it is dominated by
+ambulatory, at more than half.
+
+## Private — the effect is uniform, which is itself informative
+
+% of pre-2014 level (SE); nothing reaches p < 0.05:
+
+| Setting | $/resident | $/enrollee | Enc/resident | Enc/enrollee |
+|---|---|---|---|---|
+| Ambulatory | 2.1 (2.5) | **5.3 (3.0)** | 1.3 (2.8) | **4.4 (3.2)** |
+| Emergency | −0.2 (1.9) | 3.2 (2.2) | 0.6 (3.7) | 3.8 (3.1) |
+| Inpatient | 1.2 (3.2) | 4.0 (3.7) | 0.7 (3.4) | 3.1 (3.5) |
+| Nursing facility | 4.6 (6.9) | 7.3 (7.0) | 2.7 (5.6) | 5.5 (6.2) |
+| Pharmacy | 0.8 (4.9) | 4.2 (4.3) | −0.8 (3.4) | 2.2 (3.0) |
+| **All care** | **1.7 (2.4)** | **4.8 (2.8)** | **0.3 (2.4)** | **3.3 (2.4)** |
+
+**The hypothesis that new marketplace enrollees concentrate in outpatient care
+is not supported.** Every setting shows the same small positive on the
+per-enrollee margins and nothing on the per-resident margins. If the control
+group had added enrollees who used *only* ambulatory care, ambulatory would
+separate from the rest. It does not.
+
+That uniformity is evidence *for* the dilution reading rather than against it: a
+control group that adds enrollees who use less of everything shifts every
+per-enrollee margin by roughly the same proportion, which is what the table
+shows.
+
+**And it is use, not price.** Encounters per enrollee move +3.3% against
+spending per enrollee at +4.8%. Since spending/enrollee ≈ price × encounters/
+enrollee, at most about 1.5% of the private per-enrollee effect is price. The
+story is utilisation.
+
+Pre-trend p for private: ambulatory 0.10, emergency 0.13, inpatient 0.27,
+nursing 0.27, **pharmacy 0.02**, all care 0.07. Borderline throughout, failing
+in pharmacy.
+
+→ `evidence/E7-1_private_by_setting.pdf`
+
+## Medicaid — everything is on the per-resident margin
+
+| Setting | $/resident | $/enrollee | Enc/resident | Enc/enrollee |
+|---|---|---|---|---|
+| Ambulatory | **23.6 (5.8)\*** | 0.0 (5.6) | 15.5 (8.2) | −4.4 (8.9) |
+| Emergency | **21.7 (7.8)\*** | −2.0 (7.4) | 7.7 (6.3) | −5.5 (6.4) |
+| Inpatient | **22.5 (4.8)\*** | 4.4 (5.0) | **21.2 (5.5)\*** | 3.4 (7.2) |
+| Nursing facility | 2.0 (6.6) | −14.4 (9.2) | 4.5 (7.0) | −10.4 (9.2) |
+| Pharmacy | 11.1 (12.7) | −22.5 (17.9) | 0.4 (15.9) | −37.8 (22.5) |
+| **All care** | **18.0 (4.0)\*** | −3.3 (4.2) | 10.1 (5.9) | **−15.4 (6.9)\*** |
+
+All six Medicaid models pass their pre-test.
+
+**Do not report the −15.4% total encounters per enrollee as a finding.** Total
+volume sums prescription fills with hospital stays, and prescriptions dominate
+the count (923 per 1,000 residents against 51 for inpatient). That figure is
+close to a prescription count, and no individual setting is significant. This is
+the aggregation problem flagged in `R/prep_panel.R`.
+
+→ `evidence/E7-2_medicaid_by_setting.pdf`
+
+## Medicare — one significant result in 24, which is chance
+
+Pharmacy spending per enrollee, +3.2% (1.3). Everything else within noise of
+zero on every margin.
+
+## Decision 3 is live again
+
+The model count went from 24 to 84. Across all of them the pre-trend pass rate
+is Medicaid 100%, Medicare 83%, private 71%, out-of-pocket 25%. Whatever subset
+reaches the poster, the multiple-comparisons guard needs settling — this is the
+tabled decision, and the panel list now determines it.

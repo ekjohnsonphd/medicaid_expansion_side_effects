@@ -35,6 +35,9 @@ prep_panel <- function(verbose = TRUE) {
 
   d[, `:=`(pop  = spend_mean / spend_per_capita_mean,
            bene = spend_mean / spend_per_bene_mean)]
+  # Volume: DEX reports encounters per 1,000. Recover the count so it can be
+  # aggregated, then re-express per capita and per enrollee below.
+  d[, vol := vol_per_capita_mean / 1000 * pop]
 
   if (verbose) {
     # Both denominators should be invariant where theory says they are.
@@ -50,9 +53,13 @@ prep_panel <- function(verbose = TRUE) {
                .(location_name, year_id, payer, bene_ip = bene)]
 
   # Totals across the five settings, plus each setting on its own.
-  tot <- d[, .(spend = sum(spend_mean), bene = NA_real_, toc = "Total"),
+  # NOTE: Total volume sums encounters across settings, which adds a hospital
+  # stay to a prescription fill. Usable as "total encounters", not as a
+  # quantity with a natural unit. Per-setting volume is the interpretable one.
+  tot <- d[, .(spend = sum(spend_mean), vol = sum(vol), bene = NA_real_, toc = "Total"),
            by = .(location_name, year_id, payer)]
-  ind <- d[, .(location_name, year_id, payer, toc, spend = spend_mean, bene = bene)]
+  ind <- d[, .(location_name, year_id, payer, toc, spend = spend_mean,
+               vol = vol, bene = bene)]
   p <- rbind(tot, ind, use.names = TRUE)
 
   p <- merge(merge(p, popref,  by = c("location_name", "year_id")),
@@ -61,7 +68,10 @@ prep_panel <- function(verbose = TRUE) {
   # Per-enrollee: own-setting denominator, except Total which uses the reference.
   p[, bene_use := fifelse(toc == "Total", bene_ip, bene)]
 
-  p[, `:=`(spend_per_capita = spend / pop_ref,
+  p[, `:=`(vol_per_capita = 1000 * vol / pop_ref,
+           vol_per_bene    = fifelse(is.finite(bene_use) & bene_use > 0,
+                                     1000 * vol / bene_use, NA_real_),
+           spend_per_capita = spend / pop_ref,
            spend_per_bene   = fifelse(is.finite(bene_use) & bene_use > 0,
                                       spend / bene_use, NA_real_),
            coverage         = fifelse(is.finite(bene_ip) & bene_ip > 0,
