@@ -91,3 +91,48 @@ an event-study panel, and the counterfactual idiom applied by setting.
   poster shows. C1 + C9 + C11 puts roughly a dozen numbers on the wall; the
   full by-setting tables put up 84.
 - **The template** — yours to give.
+
+---
+
+# Second pass: uncertainty, and the whole information set
+
+Added 2026-09-02 after Emily's note that none of the first-pass figures showed
+variance. `R/figures_full.R`.
+
+## How the uncertainty is drawn
+
+Error bars on group means would show the wrong thing — the spread across states,
+not the precision of the estimate. Instead the counterfactual is built **from the
+estimator**:
+
+>  counterfactual_t = actual_t − ATT_t,  band = counterfactual_t ∓ 1.96 · SE_t
+
+with ATT_t and SE_t from the Callaway–Sant'Anna event study. Two consequences
+worth stating out loud, because they make these figures readable at a glance:
+
+- **Before 2014**, the band is the parallel-trends test drawn in dollars. The
+  actual line sitting inside its own band is a passing pre-test.
+- **After 2014**, the actual line leaving the band is a significant effect.
+
+So one picture carries the estimate, its precision, and its identifying
+assumption. Nothing is abstracted into a percentage.
+
+| # | Figure | Serves | Notes |
+|---|---|---|---|
+| **C14** | Medicaid, both margins, with band | **Point 2** | Left: inside the band to 2013, then clean break above it. Right: inside the band throughout. The contrast is the finding |
+| **C15** | All four payers, per resident, with band | Points 2 and 4 | Only Medicaid leaves its band. Out-of-pocket leaves it *before* 2014, which is the pre-trend failure made visible |
+| **C16** | Private, three margins, with band | **Point 3** | Spending per resident, spending per enrollee, encounters per enrollee. The actual path stays inside every band — the honest version of "weak evidence" |
+| **C17** | **Every payer × every setting, per resident, with bands** | the whole set | 20 panels, each on its own scale. Medicaid ambulatory, emergency and inpatient break out; nothing else does. This is the information set behind every headline number |
+
+**On C17 and per-panel scales.** The first build used `facet_grid`, which shares
+one y-axis across each row and crushed panels whose levels differ — Medicaid
+ambulatory at $450 against private at $1,400. It now uses `facet_wrap` so each
+panel is scaled to its own series. Worth knowing if a version of this reaches
+the poster: shared scales would misrepresent the small-level payers.
+
+## Revised recommendation
+
+C1 for point 1, **C14** for point 2, **C16** for point 3, **C15** for point 4,
+and **C17** as the backing detail — on the poster if there is room, in your hand
+at the board if not. C9–C11 remain available as the no-uncertainty versions if
+the banded ones read as too busy at A0.
