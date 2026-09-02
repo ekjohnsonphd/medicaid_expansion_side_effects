@@ -413,3 +413,77 @@ consistent with that, but the structural point stands on its own.
 
 This is also why out-of-pocket has no per-enrollee denominator in DEX: there is
 no such thing as an out-of-pocket enrollee.
+
+---
+
+# The private coverage effect is not crowd-out
+
+Emily asked how the "58% of the Medicaid gain came from private coverage" figure
+was built, and whether a marketplace mechanism could be driving the private
+result. Both questions land.
+
+## Where 58% came from, and why it should not be used
+
+It is the ratio of two ATTs: |private| / Medicaid = 2.16 / 3.69 = **0.583**.
+Delta-method 95% CI **[24%, 92%]** — far too wide to quote as a figure.
+
+More important, **it is a ratio of net changes, not a flow.** It says the
+differential private change is 58% as large as the differential Medicaid change.
+It says nothing about where any individual came from. Gross flows in both
+directions are invisible here.
+
+## The levels overturn the crowd-out reading
+
+Coverage, group means, 2013 → 2018:
+
+| Series | 2014 expanders | Never expanded | Difference |
+|---|---|---|---|
+| Medicaid | 19.0 → **23.0** (+3.96) | 15.8 → 15.3 (−0.42) | **+4.38** |
+| Private | 62.9 → **64.4** (+1.52) | 62.6 → **66.5** (+3.83) | **−2.31** |
+| Uninsured | 12.0 → 6.3 (−5.68) | 14.7 → 10.6 (−4.06) | −1.62 |
+| Medicare | 15.8 → 17.5 (+1.68) | 15.9 → 17.7 (+1.80) | −0.12 |
+
+**Private coverage rose in expansion states.** It rose faster in non-expansion
+states. The negative difference-in-differences is the control group gaining, not
+the treated group losing, and a DiD coefficient cannot distinguish the two.
+
+This is consistent with the ACA's own structure. Marketplace subsidies run from
+100% to 400% FPL. In an expansion state the 100–138% FPL population goes to
+Medicaid; in a non-expansion state that same population is subsidy-eligible on
+the exchange. So non-expansion states should add subsidized *private* coverage
+in exactly the income band that expansion states route into Medicaid — which is
+what the levels show.
+
+## What this does to the per-enrollee result
+
+Private spending per enrollee, 2013 → 2018:
+
+| Group | Growth | Coverage change |
+|---|---|---|
+| 2014 expanders | **+9.4%** | +1.52 pp |
+| Never expanded | **+7.6%** | +3.83 pp |
+
+The control group added more than twice as many private enrollees and saw
+slower growth in spending per enrollee. That is what dilution by a newly
+enrolled, lower-spending marketplace population looks like.
+
+So the positive treated-vs-control per-enrollee estimate (+4.8%, SE 2.8) most
+plausibly reflects **composition change in the control group**, not selective
+exit in the treated group. The sign is unchanged; the mechanism is the opposite
+of the one in the earlier draft of finding 3.
+
+**What can be said:** expansion shifted the newly covered into Medicaid rather
+than into subsidized private coverage, and the two groups' private risk pools
+therefore evolved differently.
+
+**What cannot be said:** that anyone left private coverage for Medicaid, or that
+the people who did so were low-cost. Private coverage rose in expansion states.
+
+## The cleaner story this leaves
+
+Within expansion states, 2013 → 2018: the uninsured rate fell 5.68 pp, Medicaid
+rose 3.96 pp and private rose 1.52 pp. Those two gains sum to 5.48 pp against a
+5.68 pp fall in uninsurance. **Expansion covered the uninsured.** It did not
+displace private insurance.
+
+Script: `R/evidence_crowdout.R` → `evidence/E6-1_coverage_levels.pdf`
