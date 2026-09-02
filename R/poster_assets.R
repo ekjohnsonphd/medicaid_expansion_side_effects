@@ -33,12 +33,10 @@ th <- function(...) theme_emily(base_size = BASE, ...) +
 # years runs the labels together.
 YRS <- scale_x_continuous(NULL, breaks = c(2010, 2014, 2018))
 
-# PDF for the LaTeX poster; PNG for the Quarto/Typst one (Typst cannot embed PDF).
-sv <- function(g, f, w = 245, h = 150) {
-  ggsave(file.path(FIG, f), g, width = w, height = h, units = "mm", dpi = 300)
+# PNG only: Typst cannot embed PDF images.
+sv <- function(g, f, w = 245, h = 150)
   ggsave(file.path(FIG, sub("\\.pdf$", ".png", f)), g, width = w, height = h,
          units = "mm", dpi = 300, device = ragg::agg_png)
-}
 
 # Copy one idiom's figures to the canonical names the .qmd references, so the
 # poster text lives in a single file and switching style is one command:
@@ -134,39 +132,30 @@ sv(gband(al_b, "Dollars per resident") + facet_wrap(~ mf, nrow = 1, scales = "fr
    "f4_payers_band.pdf", 245, 165)
 
 # ============================ TABLES ==========================================
+# Written as markdown so the numbers can be pasted into poster.qmd, which is
+# the editable source. Regenerate after any change to the estimates.
 ov <- fread("notes/evidence/overall_att.csv")
-tex <- function(x, f) writeLines(x, file.path(TAB, f))
+md <- function(x, f) writeLines(x, file.path(TAB, f))
 
-# T1 coverage
-cvt <- rbind(ov[outcome == "coverage" & payer != "mdcr",
-                .(m = PAYERS[payer], att, se, pre_p)],
+cvt <- rbind(ov[outcome == "coverage" & payer != "mdcr", .(m = PAYERS[payer], att, se, pre_p)],
              ov[outcome == "uninsured", .(m = "Uninsured", att, se, pre_p)],
              ov[outcome == "coverage" & payer == "mdcr", .(m = "Medicare", att, se, pre_p)])
-cvt <- cvt[order(-att)]
-tex(c("\\begin{tabular}{@{}lrrr@{}}", "\\toprule",
-      "\\textbf{Coverage} & \\textbf{Effect} & \\textbf{95\\% CI} & \\textbf{Pre-test} \\\\",
-      "\\midrule",
-      cvt[, sprintf("%s & $%+.2f$ & $[%+.2f,\\ %+.2f]$ & %.2f \\\\",
-                    m, att, att - 1.96 * se, att + 1.96 * se, pre_p)],
-      "\\bottomrule", "\\end{tabular}"), "t1_coverage.tex")
+md(c("| Coverage | Effect | 95% CI | Pre-test |",
+     "|:---------|-------:|:-------|---------:|",
+     cvt[order(-att), sprintf("| %s | %+.2f | [%+.2f, %+.2f] | %.2f |",
+                              m, att, att - 1.96 * se, att + 1.96 * se, pre_p)]),
+   "t1_coverage.md")
 
-# T2: settings down the side, payers across the top. The vertical form ran to
-# 21 lines and overflowed the column.
 e2 <- eff[payer %chin% names(PAY3) & outcome %chin% c("spend_per_capita", "spend_per_bene")]
-e2[, cell := sprintf("$%+.1f$ (%.1f)%s", pct, pct_se, fifelse(p < .05, "$^{*}$", ""))]
-e2[, key := paste(payer, outcome, sep = "_")]
-w2 <- dcast(e2, toc ~ key, value.var = "cell")
-w2[, ord := match(toc, names(SETTINGS))]
-setorder(w2, ord)
-cols <- c("mdcd_spend_per_capita", "mdcd_spend_per_bene",
-          "mdcr_spend_per_capita", "mdcr_spend_per_bene",
-          "priv_spend_per_capita", "priv_spend_per_bene")
-body <- w2[, do.call(sprintf, c(list("%s & %s & %s & %s & %s & %s & %s \\\\"),
-                                list(SETTINGS[toc]), lapply(cols, function(k) get(k))))]
-tex(c("\\begin{tabular}{@{}lrrrrrr@{}}", "\\toprule",
-      " & \\multicolumn{2}{c}{\\textbf{Medicaid}} & \\multicolumn{2}{c}{\\textbf{Medicare}} & \\multicolumn{2}{c}{\\textbf{Private}} \\\\",
-      "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}",
-      "\\textbf{Setting} & per res. & per enr. & per res. & per enr. & per res. & per enr. \\\\",
-      "\\midrule", body, "\\bottomrule", "\\end{tabular}"), "t2_spending.tex")
+e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(p < .05, " *", ""))]
+for (out in c("spend_per_capita", "spend_per_bene")) {
+  w <- dcast(e2[outcome == out], toc ~ payer, value.var = "cell")
+  w[, ord := match(toc, names(SETTINGS))]; setorder(w, ord)
+  md(c(sprintf("**Spending per %s**", fifelse(out == "spend_per_capita", "resident", "enrollee")),
+       "", "| Setting | Medicaid | Medicare | Private |",
+       "|:--------|---------:|---------:|--------:|",
+       w[, sprintf("| %s | %s | %s | %s |", SETTINGS[toc], mdcd, mdcr, priv)]),
+     sprintf("t2_%s.md", out))
+}
 
 cat("assets written\n")
