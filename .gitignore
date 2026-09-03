@@ -90,7 +90,11 @@ slides/figures_survey/
 !slides/survey_deck.pdf
 
 # Poster figures are regenerable; the poster PDFs are tracked
-poster/figures/
+# (contents, not the directory itself, so the logo can be re-included below)
+poster/figures/*
+# The SDU logo is a source asset, not a build output
+!poster/figures/sdu_logo.svg
+!poster/figures/sdu_logo.png
 poster/pv_*.png
 !poster/poster_band.pdf
 !poster/poster_lines.pdf

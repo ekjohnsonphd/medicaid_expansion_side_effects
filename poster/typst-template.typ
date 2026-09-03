@@ -38,6 +38,9 @@
   set block(spacing: 1.05em)
 
   // ---- header ----
+  // Placed, not flowed: the poster fills its three columns exactly, so the
+  // logo must not push the body down. SVG keeps it vector at A0.
+  place(top + left, dx: -27mm, dy: 2mm, image("figures/sdu_logo.svg", width: 150mm))
   align(center)[
     #text(size: 86pt, weight: "bold")[#title]
     #v(7mm)
