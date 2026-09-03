@@ -202,18 +202,27 @@ md(c("| Coverage | Effect | 95% CI | Pre-test |",
                               m, att, att - 1.96 * se, att + 1.96 * se, pre_p)]),
    "t1_coverage.md")
 
-# Multiple comparisons (Decision 3). The family is the 36 estimates the poster
-# actually reports -- 3 payers x 6 settings x 2 spending margins -- since that
-# is what a reader sees. Stars mark Benjamini-Hochberg q < 0.05, not raw p.
-e2 <- eff[payer %chin% names(PAY3) & outcome %chin% c("spend_per_capita", "spend_per_bene")]
+# Multiple comparisons (Decision 3). The family is every estimate the poster
+# reports -- 3 payers x 6 settings x 2 spending margins, plus 3 x 5 x 2
+# encounter margins -- since that is what a reader sees. The All-care row is
+# dropped from the encounter tables: summing across settings adds a hospital
+# stay to a prescription fill, so the total has no natural unit. That leaves 66.
+# Stars mark Benjamini-Hochberg q < 0.05, not raw p.
+OUT4 <- c(spend_per_capita = "Spending per resident",
+          spend_per_bene   = "Spending per enrollee",
+          vol_per_capita   = "Encounters per resident",
+          vol_per_bene     = "Encounters per enrollee")
+e2 <- eff[payer %chin% names(PAY3) & outcome %chin% names(OUT4)]
+e2 <- e2[!(outcome %like% "^vol" & toc == "Total")]
+stopifnot(nrow(e2) == 66)
 e2[, q := p.adjust(p, "BH")]
 e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(q < .05, " *", ""))]
 fwrite(e2[, .(payer, toc, outcome, pct, pct_se, p, q)], "results/poster_family_bh.csv")
-for (out in c("spend_per_capita", "spend_per_bene")) {
+for (out in names(OUT4)) {
   w <- dcast(e2[outcome == out], toc ~ payer, value.var = "cell")
   w[, ord := match(toc, names(SETTINGS))]; setorder(w, ord)
-  md(c(sprintf("**Spending per %s**", fifelse(out == "spend_per_capita", "resident", "enrollee")),
-       "", "| Setting | Medicaid | Medicare | Private |",
+  md(c(sprintf("**%s**", OUT4[[out]]), "",
+       "| Setting | Medicaid | Medicare | Private |",
        "|:--------|---------:|---------:|--------:|",
        w[, sprintf("| %s | %s | %s | %s |", SETTINGS[toc], mdcd, mdcr, priv)]),
      sprintf("t2_%s.md", out))

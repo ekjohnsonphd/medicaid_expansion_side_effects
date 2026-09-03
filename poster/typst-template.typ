@@ -54,20 +54,20 @@
   // ---- panel headings ----
   // Pandoc shifts headings up by one when the document has a YAML title, so
   // `##` in the .qmd arrives here as level 1 and `###` as level 2.
-  show heading.where(level: 1): it => block(above: 13mm, below: 6mm, width: 100%)[
+  show heading.where(level: 1): it => block(above: 9mm, below: 5mm, width: 100%)[
     #line(length: 100%, stroke: 2.5pt + light)
     #v(4mm)
     #text(size: 38pt, weight: "bold", fill: navy)[#it.body]
   ]
   // `###` in the .qmd marks the highlighted panel.
-  show heading.where(level: 2): it => block(above: 13mm, below: 6mm, width: 100%)[
+  show heading.where(level: 2): it => block(above: 9mm, below: 5mm, width: 100%)[
     #line(length: 100%, stroke: 5pt + treat)
     #v(4mm)
     #text(size: 38pt, weight: "bold", fill: treat)[#it.body]
   ]
 
   show figure: it => align(center, it.body)          // no captions or numbering
-  show table: set text(size: 23pt)
+  show table: set text(size: 26pt)
   set table(stroke: none, inset: (x: 5pt, y: 4pt))
 
   // strong text in the project's blue, so numbers pop without extra markup
@@ -77,4 +77,5 @@
 }
 
 // Small grey caption text, used under figures.
-#let note(body) = text(size: 23pt, fill: rgb("#6C757D"))[#body]
+#let note(body) = block(width: 100%, above: 5mm, below: 6mm,
+  text(size: 23pt, fill: rgb("#6C757D"))[#body])
