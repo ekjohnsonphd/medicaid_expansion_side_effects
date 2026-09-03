@@ -2,10 +2,10 @@
 title: "Who Pays After Medicaid Expansion?"
 subtitle: "Coverage, spending and utilisation across payers in US states, 2010--2018"
 author:
-  - name: Emily K. Johnson
+  - name: Emily K. Johnson, Joe Dieleman
 venue: "Wennberg International Collaborative · September 2026"
-takeaway: "Expansion's new enrollees cost about as much as the old ones, and private insurance did not shrink to pay for them."
-takeaway-sub: "Medicaid spending per resident rose 18%; per enrollee it did not move. Private coverage grew in expansion states too, just more slowly than in states where the Marketplace covered the gap."
+takeaway: "Medicaid expansion did not produce strong changes in Medicare and private spending or utilization at the state level."
+takeaway-sub: "Medicaid spending per enrollee was unaffected by expansion. Private coverage increased in expansion and non-expansion states, but Marketplace enrollees did not have different consumption patterns than prior enrollees."
 format:
   typst:
     template-partials:
@@ -20,11 +20,7 @@ In 2014 the Affordable Care Act offered states the option of expanding Medicaid 
 under 138% of the federal poverty line, and opened the Marketplace for subsidised private
 insurance. Medicaid spending rose in expansion states with the new enrollment.
 
-Whether it displaced spending by other payers is less understood. If expansion moved
-people out of private plans, or shifted the cost of care they already received, private
-and Medicare spending should fall in expansion states relative to states that did not
-expand. We test that hypothesis on coverage, spending and encounters for all three
-payers.
+We test whether Medicaid expansion displaced population-level spending, utilization or coverage by other payers in the same state. 
 
 ## Data and design
 
@@ -44,10 +40,10 @@ $ Delta Y_t = Y_t - Y_2013 $
 $ "ATT"(t) = bb(E) [Delta Y_t | D=1] - bb(E) [bb(E) [Delta Y_t | X, D=0] | D=1] $]
 ```
 
-Figures plot $\mathrm{ATT}(t)$; tables report its 2014--2018 average. **Inference** is a
+Figures plot $\mathrm{ATT}(t)$; tables report the 2014--2018 average. **Inference** is a
 multiplier bootstrap, 1,000 draws, clustered on state. **Parallel trends** is a Wald test
 of $\mathrm{ATT}(t)=0$ across the three pre-expansion placebo years, $\chi^2_3$ on the
-analytic clustered variance. **Multiplicity** is Benjamini--Hochberg across the 66
+analytic clustered variance. **Multiplicity** is Benjamini--Hochberg across the 77
 estimates in panel 4.
 
 ## 1. Expansion covered the uninsured
@@ -65,8 +61,7 @@ estimates in panel 4.
 
 Medicaid coverage rose **3.7 points** more in expansion states, and the uninsured rate
 fell a further **1.4 points**. Private coverage grew in both groups, 62.9 to 64.4% in
-expanders and 62.6 to 66.5% in controls, so **−2.2** is controls gaining faster, not
-expanders losing: Marketplace subsidies reach 100 to 138% FPL where Medicaid does not.
+expanders and 62.6 to 66.5% in controls.
 
 ```{=typst}
 #colbreak()
@@ -81,24 +76,17 @@ expanders losing: Marketplace subsidies reach 100 to 138% FPL where Medicaid doe
 
 Spending across expansion states rose **18.0%** (SE 3.9) after expansion alongside **19.9%**
 increased enrollment, an additional **$189 per resident per year** on a pre-expansion base
-of $1,051. Spending per enrollee was not affected: **−3.3%** (SE 4.4), so the states that
-expanded bought more of the same care rather than more expensive care.
+of $1,051. Spending per enrollee was not affected: **−3.3%** (SE 4.4).
 
-### 3. No decline in private spending
+### 3. No significant change in private spending
 
 ![](figures/f3_private.png)
 
-Private spending per enrollee follows an increasing but insignificant path across
-2014--2018, averaging **+4.8%** (SE 2.8) above the pre-expansion level; per resident the
-average is **+1.7%** (SE 2.4). Neither margin shows the reduction that crowd-out would
-produce.
+Private spending shows a small and non-significant increase in spend after expansion: 
+**+4.8%** (SE 2.8) measured per enrollee and **+1.7%** (SE 2.4) per resident. 
+These results do not show a compositional difference in new Marketplace enrollees 
+between expansion and non-expansion states.
 
-Encounters per enrollee are positive in all five settings, **+2.2 to +5.5%**, and
-significant in none, so what movement there is looks like use rather than price.
-
-The interval on spending per resident, **[−3.0, +6.3]%**, excludes a fall larger than 3%
-of the pre-expansion level, or about **$80 per resident per year**. That is the tightest
-bound the design supports against crowd-out.
 
 ```{=typst}
 #colbreak()
@@ -106,27 +94,20 @@ bound the design supports against crowd-out.
 ## 4. No effect outside Medicaid
 
 We find no significant effect of the 2014 expansion on spending or encounters, per
-resident or per enrollee, in any setting, for any payer other than Medicaid. Of the **66
-estimates** below, four survive correction for multiple comparisons, and all four are
-Medicaid on the per-resident margin. Among the **44 non-Medicaid** estimates, one clears
-5% before correction and none survives it.
-
-Precision is uneven. On the aggregate margins the intervals bound the effect: Medicare
-spending per resident is **+0.4%** [−2.3, +3.0] and private **+1.7%** [−3.0, +6.3],
-ruling out displacement larger than 3% of either payer's pre-expansion spending. In the
-nursing and pharmacy cells they span 14 to 21 points, where the statement is insufficient
-evidence rather than no effect.
+resident or per enrollee, in any setting, for any payer other than Medicaid. Null estimates
+are very precise for Medicare and for inpatient, emergency and ambulatory types of care. 
+Imprecision is higher for out-of-pocket estimates and nursing and pharmacy care. 
 
 **Spending per resident**
 
-| Setting | Medicaid | Medicare | Private |
-|:--------|---------:|---------:|--------:|
-| All care    | +18.0 (3.9)* |  +0.4 (1.3) | +1.7 (2.4) |
-| Ambulatory  | +23.6 (5.8)* |  −0.9 (1.2) | +2.1 (2.4) |
-| Emergency   | +21.7 (8.1)  |  +2.9 (4.9) | −0.2 (1.9) |
-| Inpatient   | +22.5 (4.5)* |  +0.5 (1.4) | +1.2 (3.4) |
-| Nursing     |  +2.0 (6.9)  |  +3.0 (5.6) | +4.6 (7.2) |
-| Pharmacy    | +11.1 (12.8) |  +0.8 (2.9) | +0.8 (5.2) |
+| Setting | Medicaid | Medicare | Private | OOP† |
+|:--------|---------:|---------:|--------:|-----:|
+| All care    | +18.0 (3.9)* |  +0.4 (1.3) | +1.7 (2.4) |  −4.8 (7.8)  |
+| Ambulatory  | +23.6 (5.8)* |  −0.9 (1.2) | +2.1 (2.4) |  −5.4 (10.1) |
+| Emergency   | +21.7 (8.1)  |  +2.9 (4.9) | −0.2 (1.9) |  −7.8 (12.8) |
+| Inpatient   | +22.5 (4.5)* |  +0.5 (1.4) | +1.2 (3.4) |  −8.8 (14.0) |
+| Nursing     |  +2.0 (6.9)  |  +3.0 (5.6) | +4.6 (7.2) |  +1.3 (5.1)  |
+| Pharmacy    | +11.1 (12.8) |  +0.8 (2.9) | +0.8 (5.2) |  −8.4 (13.2) |
 
 **Spending per enrollee**
 
@@ -141,13 +122,13 @@ evidence rather than no effect.
 
 **Encounters per resident**
 
-| Setting | Medicaid | Medicare | Private |
-|:--------|---------:|---------:|--------:|
-| Ambulatory  | +15.5 (7.7)  | −0.2 (1.3) | +1.3 (2.9) |
-| Emergency   |  +7.7 (6.2)  | +0.3 (3.1) | +0.6 (3.7) |
-| Inpatient   | +21.2 (6.0)* | +0.1 (1.2) | +0.7 (3.3) |
-| Nursing     |  +4.5 (7.4)  | +1.5 (4.7) | +2.7 (6.2) |
-| Pharmacy    |  +0.4 (15.8) | −0.7 (2.4) | −0.8 (3.6) |
+| Setting | Medicaid | Medicare | Private | OOP† |
+|:--------|---------:|---------:|--------:|-----:|
+| Ambulatory  | +15.5 (7.7)  | −0.2 (1.3) | +1.3 (2.9) |  −7.6 (8.0)  |
+| Emergency   |  +7.7 (6.2)  | +0.3 (3.1) | +0.6 (3.7) |  −2.2 (6.9)  |
+| Inpatient   | +21.2 (6.0)* | +0.1 (1.2) | +0.7 (3.3) | −17.4 (11.9) |
+| Nursing     |  +4.5 (7.4)  | +1.5 (4.7) | +2.7 (6.2) |  +4.2 (4.5)  |
+| Pharmacy    |  +0.4 (15.8) | −0.7 (2.4) | −0.8 (3.6) |  −6.1 (13.6) |
 
 **Encounters per enrollee**
 
@@ -159,21 +140,14 @@ evidence rather than no effect.
 | Nursing     | −10.4 (10.0) | +3.2 (4.4) | +5.5 (6.4) |
 | Pharmacy    | −37.8 (23.1) | +2.1 (1.2) | +2.2 (3.1) |
 
-```{=typst}
-#note[Effect as % of the pre-2014 level (SE). \* survives Benjamini--Hochberg correction across the 66 estimates. Encounters are not summed across settings: a prescription fill and a hospital stay are not the same unit.]
-```
 
 ## Limitations
 
-Estimates apply to the 2014 cohort and the never-expanded states; the seven later
-expanding cohorts are excluded because at one to three states each, the estimator's
-variance is not identified.
+Estimates apply to the 2014 cohort and the never-expanded states through 2018. Impacts 
+on late-expanding states, and long-term impacts after 2018 are not measured.
 
-**Out-of-pocket spending is excluded.** DEX combines cost-sharing by the insured with all
-spending by the uninsured, and expansion moves that mix.
+**Out-of-pocket reflects multiple types of payment.** DEX combines cost-sharing by the insured with all
+spending by the uninsured, so compositional changes .
 
-Coverage is a state-level share, so we see that private coverage grew more slowly in
-expansion states, not which individuals switched.
-
-**Null results are bounded, not confirmed.** We report intervals rather than equivalence
-tests, so the claim is that effects larger than those bounds are excluded.
+Population-level coverage and healthcare consumption data from DEX cannot identify individual
+switching behavior across insurance types.
