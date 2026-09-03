@@ -212,20 +212,30 @@ OUT4 <- c(spend_per_capita = "Spending per resident",
           spend_per_bene   = "Spending per enrollee",
           vol_per_capita   = "Encounters per resident",
           vol_per_bene     = "Encounters per enrollee")
-e2 <- eff[payer %chin% names(PAY3) & outcome %chin% names(OUT4)]
+# Out-of-pocket appears on the per-resident margins only: DEX has no enrollee
+# denominator for it, so spend_per_bene and vol_per_bene were never estimated.
+e2 <- eff[payer %chin% c(names(PAY3), "oop") & outcome %chin% names(OUT4)]
 e2 <- e2[!(outcome %like% "^vol" & toc == "Total")]
-stopifnot(nrow(e2) == 66)
+stopifnot(nrow(e2) == 77, e2[payer == "oop", .N] == 11)
 e2[, q := p.adjust(p, "BH")]
-e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(q < .05, " *", ""))]
-fwrite(e2[, .(payer, toc, outcome, pct, pct_se, p, q)], "results/poster_family_bh.csv")
+e2[, cell := sprintf("%+.1f (%.1f)%s", pct, pct_se, fifelse(q < .05, "*", ""))]
+fwrite(e2[, .(payer, toc, outcome, pct, pct_se, p, q, pre_p)],
+       "results/poster_family_bh.csv")
+message("pre-test failures among shown estimates:")
+print(e2[, .(n = .N, fails = sum(pre_p < .05, na.rm = TRUE)), by = payer])
 for (out in names(OUT4)) {
+  has_oop <- e2[outcome == out & payer == "oop", .N] > 0
   w <- dcast(e2[outcome == out], toc ~ payer, value.var = "cell")
   w[, ord := match(toc, names(SETTINGS))]; setorder(w, ord)
-  md(c(sprintf("**%s**", OUT4[[out]]), "",
-       "| Setting | Medicaid | Medicare | Private |",
-       "|:--------|---------:|---------:|--------:|",
-       w[, sprintf("| %s | %s | %s | %s |", SETTINGS[toc], mdcd, mdcr, priv)]),
-     sprintf("t2_%s.md", out))
+  hdr <- if (has_oop) c("| Setting | Medicaid | Medicare | Private | OOP |",
+                        "|:--------|---------:|---------:|--------:|----:|")
+         else         c("| Setting | Medicaid | Medicare | Private |",
+                        "|:--------|---------:|---------:|--------:|")
+  rows <- if (has_oop)
+    w[, sprintf("| %s | %s | %s | %s | %s |", SETTINGS[toc], mdcd, mdcr, priv, oop)]
+  else
+    w[, sprintf("| %s | %s | %s | %s |", SETTINGS[toc], mdcd, mdcr, priv)]
+  md(c(sprintf("**%s**", OUT4[[out]]), "", hdr, rows), sprintf("t2_%s.md", out))
 }
 
 cat("assets written\n")
