@@ -14,7 +14,7 @@ format:
     keep-typ: false
 ---
 
-## The research question
+## Setting and question
 
 In 2014, the Affordable Care Act offered states the option of expanding Medicaid coverage
 and opened the Marketplace for private insurance. As a result, total Medicaid spending in
@@ -26,8 +26,9 @@ for Medicaid, Medicare, and private insurance across states.
 ## Data and design
 
 IHME Disease Expenditure Project (DEX 2.0): state-level spending and encounters by payer
-and setting, all ages, 2010--2018. Uninsurance from CPS. **44 states, 396 state-years** ---
-the **25** that expanded on 1 January 2014 and the **19** that never expanded. Later
+and setting, all ages, 2010--2018, fit to SHEA state expenditure. 
+Uninsurance from CPS. **25 states** expanded on 1 January 2014 
+and **19** that never expanded were used as controls. Later expanding
 cohorts are dropped (n ≤ 3 per year).
 
 Callaway and Sant'Anna (2021) group-time difference-in-differences. Writing
@@ -70,7 +71,7 @@ Private coverage changes cannot be attributed to individual switching.
 ![](figures/f1_coverage.png)
 
 ```{=typst}
-#note[Teal: the 25 states that expanded in 2014. Amber: the 19 that never expanded.]
+#note[Teal: 2014 expanding states (n = 25). Amber: non-expanding states (n = 19).]
 ```
 
 | Coverage | Effect | 95% CI | Pre-test |
@@ -91,29 +92,20 @@ states. Private insurance increased with the Marketplace in both settings, to a 
 ```{=typst}
 #note[Difference-in-differences effect at each year relative to 2014, as a percentage of the pre-expansion level in expansion states. 95% intervals from multiplier bootstrap.]
 ```
+</br>
 
-Enrollment rose **19.9%** and spending per resident rose **18.0%** (SE 3.9). Spending per
-enrollee did not follow: **−3.3%** (SE 4.4).
+Spending across expansion states rose **18.0%** (SE 3.9) after expansion alongside **19.9%** increased enrollment. 
+Spending per enrollee was not affected: **−3.3%** (SE 4.4).
 
-### 3. Weak evidence of increased private spending
+### 3. Non-significant increases in private spending
 
 ![](figures/f3_private.png)
 
 **Private coverage rose in both groups** --- 62.9 to 64.4% in expanders, 62.6 to 66.5% in
-controls. The −2.2 point estimate is control states gaining faster, not expansion states
-losing. Marketplace subsidies cover 100--138% FPL where Medicaid does not.
+controls. Marketplace subsidies cover 100--138% FPL in states where Medicaid does not.
 
-Private spending per enrollee **+4.8%** (SE 2.8) and per resident **+1.7%** (SE 2.4).
-Neither reaches significance. Spending did not fall on either margin.
-
-Encounters per enrollee are positive in all five settings (**+2.2 to +5.6%**) and
-significant in none, so what movement there is looks like **use rather than price**. The
-most likely reading is dilution of the *control* group's risk pool as lower-utilising
-marketplace enrollees joined it.
-
-```{=typst}
-#note[Axes as in panel 2. Encounters are not summed across settings: a prescription fill and a hospital stay are not the same unit.]
-```
+Private spending per enrollee and per resident rose insignificantly in 
+the four years after expansion: **4.8%** (SE 2.8) and **+1.7%** (SE 2.4) respectively. 
 
 
 ## 4. Nothing else moved
@@ -148,5 +140,5 @@ one clears 5% before correction and **none survives it**.
 | Pharmacy    | −22.5 (18.0) | +3.2 (1.4) | +4.2 (4.7) |
 
 ```{=typst}
-#note[Effect as % of the pre-2014 level (SE). \* survives Benjamini--Hochberg correction across the 36 estimates. Every Medicaid model passes the parallel-trends pre-test; private is borderline at $p = 0.07$.]
+#note[Effect as % of the pre-2014 level (SE). \* survives Benjamini--Hochberg correction across the 36 estimates.]
 ```
