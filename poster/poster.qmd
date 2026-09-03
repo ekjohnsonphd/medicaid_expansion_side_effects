@@ -151,7 +151,7 @@ Estimates apply to the 2014 cohort and the never-expanded states through 2018. I
 on late-expanding states, and long-term impacts after 2018 are not measured.
 
 **Out-of-pocket reflects multiple types of payment.** DEX combines cost-sharing by the insured with all
-spending by the uninsured, so compositional changes .
+spending by the uninsured, so compositional changes cannot be identified.
 
 Population-level coverage and healthcare consumption data from DEX cannot identify individual
 switching behavior across insurance types.
